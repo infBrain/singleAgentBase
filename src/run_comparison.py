@@ -32,69 +32,14 @@ The root cause **must** be specific instance name (pod e.g. adservice-0, service
   ]
 }}
 
-The system information you can use includes:
-
-**All Nodes**:
-['aiops-k8s-01', 'aiops-k8s-02', 'aiops-k8s-03', 'aiops-k8s-04', 'aiops-k8s-05', 'aiops-k8s-06','aiops-k8s-07', 'aiops-k8s-08', 'k8s-master1', 'k8s-master2', 'k8s-master3']
-
-**All services**:
-['adservice', 'cartservice', 'currencyservice', 'productcatalogservice', 'checkoutservice','recommendationservice', 'shippingservice','emailservice', 'paymentservice']
-Each service has three pods, e.g. adservice has three pods adservice-0, adservice-1, adservice-2
-
-**Relationship between Services**:
-A->B means service A call service B.
-frontend->adservice,frontend->productcatalogservice,frontend->currencyservice,frontend->recommendationservice,cartservice,checkoutservice->paymentservice->shippingservice->emailservice
-
-
-**All metrics**:
-apm_metric_names = ["client_error_ratio","error_ratio","request","response","rrt","server_error_ratio","timeout"]
-infra_pod_metric_names = ["pod_cpu_usage", "pod_fs_reads_bytes", "pod_fs_writes_bytes", "pod_network_receive_bytes", "pod_network_receive_packets", "pod_network_transmit_bytes", "pod_network_transmit_packets", "pod_processes"]
-infra_node_metric_names = ["node_cpu_usage_rate", "node_filesystem_usage_rate", "node_memory_usage_rate", "node_network_receive_packets_total", "node_network_transmit_packets_total", "node_sockstat_TCP_inuse"]
-
-
-**Kubernetes info**
-NAME                            READY   STATUS      RESTARTS        AGE     IP              NODE           NOMINATED NODE   READINESS GATES
-adservice-0                     1/1     Running     8 (4m14s ago)   7d5h    10.233.89.223   aiops-k8s-08   <none>           <none>
-adservice-1                     1/1     Running     12 (14m ago)    7d5h    10.233.81.32    aiops-k8s-03   <none>           <none>
-adservice-2                     1/1     Running     5 (63m ago)     7d5h    10.233.85.74    aiops-k8s-07   <none>           <none>
-cartservice-0                   1/1     Running     2 (14h ago)     7d5h    10.233.81.73    aiops-k8s-03   <none>           <none>
-cartservice-1                   1/1     Running     2 (14h ago)     7d5h    10.233.78.180   aiops-k8s-01   <none>           <none>
-cartservice-2                   1/1     Running     2 (14h ago)     7d5h    10.233.77.46    aiops-k8s-04   <none>           <none>
-checkoutservice-0               1/1     Running     1 (3d ago)      7d5h    10.233.85.52    aiops-k8s-07   <none>           <none>
-checkoutservice-1               1/1     Running     1 (3d ago)      7d5h    10.233.81.234   aiops-k8s-03   <none>           <none>
-checkoutservice-2               1/1     Running     1 (3d ago)      7d5h    10.233.77.2     aiops-k8s-04   <none>           <none>
-currencyservice-0               1/1     Running     2 (7h3m ago)    2d22h   10.233.85.212   aiops-k8s-07   <none>           <none>
-currencyservice-1               1/1     Running     2 (7h3m ago)    2d22h   10.233.81.6     aiops-k8s-03   <none>           <none>
-currencyservice-2               1/1     Running     2 (7h3m ago)    2d22h   10.233.79.185   aiops-k8s-06   <none>           <none>
-emailservice-0                  1/1     Running     4 (11h ago)     7d5h    10.233.85.75    aiops-k8s-07   <none>           <none>
-emailservice-1                  1/1     Running     4 (11h ago)     7d5h    10.233.79.60    aiops-k8s-06   <none>           <none>
-emailservice-2                  1/1     Running     4 (11h ago)     7d5h    10.233.78.139   aiops-k8s-01   <none>           <none>
-example-ant-29107680-n6c8f      1/1     Running     0               15h     10.233.74.15    aiops-k8s-05   <none>           <none>
-frontend-0                      1/1     Running     0               7d5h    10.233.85.77    aiops-k8s-07   <none>           <none>
-frontend-1                      1/1     Running     0               7d5h    10.233.81.88    aiops-k8s-03   <none>           <none>
-frontend-2                      1/1     Running     0               7d5h    10.233.74.117   aiops-k8s-05   <none>           <none>
-paymentservice-0                1/1     Running     3 (19h ago)     7d5h    10.233.81.216   aiops-k8s-03   <none>           <none>
-paymentservice-1                1/1     Running     3 (19h ago)     7d5h    10.233.89.213   aiops-k8s-08   <none>           <none>
-paymentservice-2                1/1     Running     3 (19h ago)     7d5h    10.233.78.103   aiops-k8s-01   <none>           <none>
-productcatalogservice-0         1/1     Running     1 (2d23h ago)   3d6h    10.233.74.105   aiops-k8s-05   <none>           <none>
-productcatalogservice-1         1/1     Running     1 (2d23h ago)   3d6h    10.233.81.242   aiops-k8s-03   <none>           <none>
-productcatalogservice-2         1/1     Running     1 (2d23h ago)   3d6h    10.233.85.21    aiops-k8s-07   <none>           <none>
-recommendationservice-0         1/1     Running     1 (25h ago)     2d7h    10.233.85.42    aiops-k8s-07   <none>           <none>
-recommendationservice-1         1/1     Running     1 (25h ago)     2d7h    10.233.81.146   aiops-k8s-03   <none>           <none>
-recommendationservice-2         1/1     Running     1 (25h ago)     2d7h    10.233.89.86    aiops-k8s-08   <none>           <none>
-redis-cart-0                    1/1     Running     0               7d5h    10.233.89.187   aiops-k8s-08   <none>           <none>
-shippingservice-0               1/1     Running     0               2d19h   10.233.81.210   aiops-k8s-03   <none>           <none>
-shippingservice-1               1/1     Running     0               2d19h   10.233.85.163   aiops-k8s-07   <none>           <none>
-shippingservice-2               1/1     Running     0               2d19h   10.233.89.25    aiops-k8s-08   <none>           <none>
-
-
 🔧 **Analysis Steps — Please follow carefully:**
-1. If a tool exists for anomaly type classification (e.g., classifier), use it first to identify the anomaly category.
+1. If a tool exists for anomaly type classification, use it first to identify the anomaly category.
 2. Within the given anomaly time range, you **must** perform anomaly detection on all three: time series (metrics), logs, and traces. Do not skip any of these checks.
-3. Synthesize observations from the three sources, identify candidate entities, and correlate with dependency/topology context.
-4. Validate candidates by checking upstream/downstream impact paths and consistency across signals.
-5. Before answering, explicitly judge the most likely root cause based on evidence strength and consistency.
-6. Return the final result strictly in the required JSON format.
+3. Synthesize observations from the three sources, identify candidate entities.
+4. Retrieve the system topology and call graph. Validating the fault propagation path (e.g., A calls B, and B is slow) is crucial for distinguishing root causes from symptoms.
+5. Validate candidates by checking upstream/downstream impact paths and consistency across signals.
+6. Before answering, explicitly judge the most likely root cause based on evidence strength and consistency.
+7. Return the final result strictly in the required JSON format.
 
 🔍 **Root Cause Localization Steps:**
 1. List the top suspicious entities (pod/service/node) based on anomalies observed.
@@ -285,7 +230,8 @@ if __name__ == "__main__":
                 result = run_rca_only(
                     start_time=start_time,
                     end_time=end_time,
-                    ground_truth=case.get("service") if case.get("service") != "" else case.get("instance")
+                    instance_type=case.get("instance_type"),
+                    ground_truth=case.get("instance")
                 )
                 result_answers.append(json.dumps(result, indent=2, ensure_ascii=False))
                 print(json.dumps(result, indent=2, ensure_ascii=False))

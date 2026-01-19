@@ -3,8 +3,10 @@ import sys
 # sys.path.append("./")
 # sys.path.append("../")
 import os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import trace
 from typing import Annotated, List, Tuple
 
 import pandas as pd
@@ -493,7 +495,6 @@ def time_series_anomaly_detection(
         for i in ["-0", "-1", "-2"]:
             all_pod.append(service + i)
 
-
     if "all" in instance.lower() and "all" in metric_name.lower():
         # all_nodes = [
         #     "aiops-k8s-01",
@@ -546,7 +547,9 @@ def time_series_anomaly_detection(
         for metric in infra_tidb_metric_names:
             try:
                 results.append(
-                    time_series_anomaly_detection(start_time, end_time, metric, tidb_pods[0])
+                    time_series_anomaly_detection(
+                        start_time, end_time, metric, tidb_pods[0]
+                    )
                 )
             except Exception as e:
                 print(f"Error in TIDB TSAD: {metric} {tidb_pods[0]}. Exception: {e}")
@@ -554,7 +557,9 @@ def time_series_anomaly_detection(
         for metric in tidb_pd_metric_names:
             try:
                 results.append(
-                    time_series_anomaly_detection(start_time, end_time, metric, tidb_pods[1])
+                    time_series_anomaly_detection(
+                        start_time, end_time, metric, tidb_pods[1]
+                    )
                 )
             except Exception as e:
                 print(f"Error in TIDB PD TSAD: {metric} {tidb_pods[1]}. Exception: {e}")
@@ -562,10 +567,14 @@ def time_series_anomaly_detection(
         for metric in tidb_tikv_metric_names:
             try:
                 results.append(
-                    time_series_anomaly_detection(start_time, end_time, metric, tidb_pods[2])
+                    time_series_anomaly_detection(
+                        start_time, end_time, metric, tidb_pods[2]
+                    )
                 )
             except Exception as e:
-                print(f"Error in TIDB TiKV TSAD: {metric} {tidb_pods[2]}. Exception: {e}")
+                print(
+                    f"Error in TIDB TiKV TSAD: {metric} {tidb_pods[2]}. Exception: {e}"
+                )
                 continue
         return "\n".join([item for item in results if item != ""])
     elif "all" in instance.lower() and _get_metric_type(metric_name) == "apm":
@@ -633,19 +642,25 @@ def time_series_anomaly_detection(
     elif "all" in instance.lower() and _get_metric_type(metric_name) == "infra_tidb":
         results = []
         results.append(
-            time_series_anomaly_detection(start_time, end_time, metric_name, pod=tidb_pods[0])
+            time_series_anomaly_detection(
+                start_time, end_time, metric_name, pod=tidb_pods[0]
+            )
         )
         return "\n".join([item for item in results if item != ""])
     elif "all" in instance.lower() and _get_metric_type(metric_name) == "tidb_pd":
         results = []
         results.append(
-            time_series_anomaly_detection(start_time, end_time, metric_name, pod=tidb_pods[1])
+            time_series_anomaly_detection(
+                start_time, end_time, metric_name, pod=tidb_pods[1]
+            )
         )
         return "\n".join([item for item in results if item != ""])
     elif "all" in instance.lower() and _get_metric_type(metric_name) == "tidb_tikv":
         results = []
         results.append(
-            time_series_anomaly_detection(start_time, end_time, metric_name, pod=tidb_pods[2])
+            time_series_anomaly_detection(
+                start_time, end_time, metric_name, pod=tidb_pods[2]
+            )
         )
         return "\n".join([item for item in results if item != ""])
     else:
@@ -1325,67 +1340,67 @@ def get_logs_offline(
     return result_df
 
 
-def log_anomaly_detection_old(
-    start_time: Annotated[str, "Start time"],
-    end_time: Annotated[str, "End time"],
-) -> str:
-    """
-    Detect error logs by searching for specific keywords in log messages
+# def log_anomaly_detection_old(
+#     start_time: Annotated[str, "Start time"],
+#     end_time: Annotated[str, "End time"],
+# ) -> str:
+#     """
+#     Detect error logs by searching for specific keywords in log messages
 
-    Args:
-        start_time: Supports two formats:
-                   1. Beijing time format (e.g., '2024-09-12 20:08:19')
-                   2. UTC format (e.g., '2024-09-12T12:08:19Z')
-        end_time: Same formats as start_time
+#     Args:
+#         start_time: Supports two formats:
+#                    1. Beijing time format (e.g., '2024-09-12 20:08:19')
+#                    2. UTC format (e.g., '2024-09-12T12:08:19Z')
+#         end_time: Same formats as start_time
 
-    Returns:
-        Text description of detected error logs, with duplicate messages removed
-    """
-    # Get logs for the specified time period
-    logs_df = get_logs_offline(start_time, end_time)
+#     Returns:
+#         Text description of detected error logs, with duplicate messages removed
+#     """
+#     # Get logs for the specified time period
+#     logs_df = get_logs_offline(start_time, end_time)
 
-    if logs_df.empty:
-        return "No logs found for the specified time period"
+#     if logs_df.empty:
+#         return "No logs found for the specified time period"
 
-    # Define error keywords (case insensitive)
-    error_keywords = ["error", "fail", "exception"]
+#     # Define error keywords (case insensitive)
+#     error_keywords = ["error", "fail", "exception"]
 
-    # Create regex pattern for error keywords
-    pattern = "|".join(error_keywords)
+#     # Create regex pattern for error keywords
+#     pattern = "|".join(error_keywords)
 
-    # Filter logs containing error keywords
-    error_logs = logs_df[
-        logs_df["message"].str.lower().str.contains(pattern, case=False, na=False)
-    ]
+#     # Filter logs containing error keywords
+#     error_logs = logs_df[
+#         logs_df["message"].str.lower().str.contains(pattern, case=False, na=False)
+#     ]
 
-    if error_logs.empty:
-        return "No error logs detected during the specified time period"
+#     if error_logs.empty:
+#         return "No error logs detected during the specified time period"
 
-    # Group errors by pod, using sets to remove duplicates
-    pod_errors = {}
-    for _, row in error_logs.iterrows():
-        pod = row["pod"]
-        timestamp = row["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
-        message = row["message"]
+#     # Group errors by pod, using sets to remove duplicates
+#     pod_errors = {}
+#     for _, row in error_logs.iterrows():
+#         pod = row["pod"]
+#         timestamp = row["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
+#         message = row["message"]
 
-        if pod not in pod_errors:
-            pod_errors[pod] = (
-                {}
-            )  # Using dict to store unique messages with their first occurrence time
+#         if pod not in pod_errors:
+#             pod_errors[pod] = (
+#                 {}
+#             )  # Using dict to store unique messages with their first occurrence time
 
-        if message not in pod_errors[pod]:
-            pod_errors[pod][message] = timestamp
+#         if message not in pod_errors[pod]:
+#             pod_errors[pod][message] = timestamp
 
-    # Generate report
-    report_parts = ["Error Logs Detected:"]
+#     # Generate report
+#     report_parts = ["Error Logs Detected:"]
 
-    for pod, messages in pod_errors.items():
-        report_parts.append(f"\nPod: {pod}")
-        report_parts.append("-" * (len(pod) + 5))
-        for msg, timestamp in messages.items():
-            report_parts.append(f"[{timestamp}] {msg}")
+#     for pod, messages in pod_errors.items():
+#         report_parts.append(f"\nPod: {pod}")
+#         report_parts.append("-" * (len(pod) + 5))
+#         for msg, timestamp in messages.items():
+#             report_parts.append(f"[{timestamp}] {msg}")
 
-    return "\n".join(report_parts)
+#     return "\n".join(report_parts)
 
 
 def log_anomaly_detection(
@@ -1411,7 +1426,28 @@ def log_anomaly_detection(
         return "No logs found for the specified time period"
 
     # Define error keywords (case insensitive)
-    error_keywords = ["error", "fail", "exception"]
+    # error_keywords = ["error", "fail", "exception"]
+    error_keywords = [
+        "error",
+        "failed",
+        "failure",
+        "exception",
+        "timeout",
+        "crash",
+        "disconnect",
+        "refused",
+        "rejected",
+        "aborted",
+        "unavailable",
+        "misbehaving",
+        "timeout",
+        "retry",
+        "conflict",
+        "deadlock",
+        "rollback",
+        "abort",
+        "stall",
+    ]
 
     # Create regex pattern for error keywords
     pattern = "|".join(error_keywords)
@@ -1553,51 +1589,106 @@ Main failure type: pod memory"""
     return response
 
 
-def query_system_information(query: Annotated[str, "query question"]) -> str:
-    """
-    Use RAG approach to retrieve information from system_info.txt
+def query_system_information() -> str:
+    return """
+The system information is as follows:
 
-    Args:
-        query: User's query question
+**All Nodes**:
+['aiops-k8s-01', 'aiops-k8s-02', 'aiops-k8s-03', 'aiops-k8s-04', 'aiops-k8s-05', 'aiops-k8s-06','aiops-k8s-07', 'aiops-k8s-08', 'k8s-master1', 'k8s-master2', 'k8s-master3']
 
-    Returns:
-        Retrieved relevant information
-    """
-    # Read system_info.txt file
-    base_path = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )
-    system_info_path = os.path.join(base_path, "data", "system_info.txt")
-    if not os.path.exists(system_info_path):
-        return "system_info.txt file not found"
+**All services**:
+['adservice', 'cartservice', 'currencyservice', 'productcatalogservice', 'checkoutservice','recommendationservice', 'shippingservice','emailservice', 'paymentservice']
+Each service has three pods, e.g. adservice has three pods adservice-0, adservice-1, adservice-2
 
-    try:
-        with open(system_info_path, "r", encoding="utf-8") as f:
-            content = f.read()
-    except Exception as e:
-        return f"Failed to read system_info.txt: {str(e)}"
-
-    # Split text into paragraphs
-    paragraphs = [p.strip() for p in content.split("\n\n") if p.strip()]
-
-    # Construct prompt
-    prompt = f"""As a system information retrieval assistant, please help me find the most relevant information from the system information below.
-
-Question: {query}
-
-System Information:
-{content}
-
-Please return only the relevant information without any explanation or comments. If no relevant information is found, return "No relevant information found"."""
-
-    # Use LLM for retrieval
-    response = chat(prompt)
-
-    return response
+**Relationship between Services**:
+A->B means service A call service B.
+frontend->adservice,frontend->productcatalogservice,frontend->currencyservice,frontend->recommendationservice,cartservice,checkoutservice->paymentservice->shippingservice->emailservice
 
 
-def generate_sop():
-    return
+**All metrics**:
+apm_metric_names = ["client_error_ratio","error_ratio","request","response","rrt","server_error_ratio","timeout"]
+infra_pod_metric_names = ["pod_cpu_usage", "pod_fs_reads_bytes", "pod_fs_writes_bytes", "pod_network_receive_bytes", "pod_network_receive_packets", "pod_network_transmit_bytes", "pod_network_transmit_packets", "pod_processes"]
+infra_node_metric_names = ["node_cpu_usage_rate", "node_filesystem_usage_rate", "node_memory_usage_rate", "node_network_receive_packets_total", "node_network_transmit_packets_total", "node_sockstat_TCP_inuse"]
+
+
+**Kubernetes info**
+NAME                            READY   STATUS      RESTARTS        AGE     IP              NODE           NOMINATED NODE   READINESS GATES
+adservice-0                     1/1     Running     8 (4m14s ago)   7d5h    10.233.89.223   aiops-k8s-08   <none>           <none>
+adservice-1                     1/1     Running     12 (14m ago)    7d5h    10.233.81.32    aiops-k8s-03   <none>           <none>
+adservice-2                     1/1     Running     5 (63m ago)     7d5h    10.233.85.74    aiops-k8s-07   <none>           <none>
+cartservice-0                   1/1     Running     2 (14h ago)     7d5h    10.233.81.73    aiops-k8s-03   <none>           <none>
+cartservice-1                   1/1     Running     2 (14h ago)     7d5h    10.233.78.180   aiops-k8s-01   <none>           <none>
+cartservice-2                   1/1     Running     2 (14h ago)     7d5h    10.233.77.46    aiops-k8s-04   <none>           <none>
+checkoutservice-0               1/1     Running     1 (3d ago)      7d5h    10.233.85.52    aiops-k8s-07   <none>           <none>
+checkoutservice-1               1/1     Running     1 (3d ago)      7d5h    10.233.81.234   aiops-k8s-03   <none>           <none>
+checkoutservice-2               1/1     Running     1 (3d ago)      7d5h    10.233.77.2     aiops-k8s-04   <none>           <none>
+currencyservice-0               1/1     Running     2 (7h3m ago)    2d22h   10.233.85.212   aiops-k8s-07   <none>           <none>
+currencyservice-1               1/1     Running     2 (7h3m ago)    2d22h   10.233.81.6     aiops-k8s-03   <none>           <none>
+currencyservice-2               1/1     Running     2 (7h3m ago)    2d22h   10.233.79.185   aiops-k8s-06   <none>           <none>
+emailservice-0                  1/1     Running     4 (11h ago)     7d5h    10.233.85.75    aiops-k8s-07   <none>           <none>
+emailservice-1                  1/1     Running     4 (11h ago)     7d5h    10.233.79.60    aiops-k8s-06   <none>           <none>
+emailservice-2                  1/1     Running     4 (11h ago)     7d5h    10.233.78.139   aiops-k8s-01   <none>           <none>
+example-ant-29107680-n6c8f      1/1     Running     0               15h     10.233.74.15    aiops-k8s-05   <none>           <none>
+frontend-0                      1/1     Running     0               7d5h    10.233.85.77    aiops-k8s-07   <none>           <none>
+frontend-1                      1/1     Running     0               7d5h    10.233.81.88    aiops-k8s-03   <none>           <none>
+frontend-2                      1/1     Running     0               7d5h    10.233.74.117   aiops-k8s-05   <none>           <none>
+paymentservice-0                1/1     Running     3 (19h ago)     7d5h    10.233.81.216   aiops-k8s-03   <none>           <none>
+paymentservice-1                1/1     Running     3 (19h ago)     7d5h    10.233.89.213   aiops-k8s-08   <none>           <none>
+paymentservice-2                1/1     Running     3 (19h ago)     7d5h    10.233.78.103   aiops-k8s-01   <none>           <none>
+productcatalogservice-0         1/1     Running     1 (2d23h ago)   3d6h    10.233.74.105   aiops-k8s-05   <none>           <none>
+productcatalogservice-1         1/1     Running     1 (2d23h ago)   3d6h    10.233.81.242   aiops-k8s-03   <none>           <none>
+productcatalogservice-2         1/1     Running     1 (2d23h ago)   3d6h    10.233.85.21    aiops-k8s-07   <none>           <none>
+recommendationservice-0         1/1     Running     1 (25h ago)     2d7h    10.233.85.42    aiops-k8s-07   <none>           <none>
+recommendationservice-1         1/1     Running     1 (25h ago)     2d7h    10.233.81.146   aiops-k8s-03   <none>           <none>
+recommendationservice-2         1/1     Running     1 (25h ago)     2d7h    10.233.89.86    aiops-k8s-08   <none>           <none>
+redis-cart-0                    1/1     Running     0               7d5h    10.233.89.187   aiops-k8s-08   <none>           <none>
+shippingservice-0               1/1     Running     0               2d19h   10.233.81.210   aiops-k8s-03   <none>           <none>
+shippingservice-1               1/1     Running     0               2d19h   10.233.85.163   aiops-k8s-07   <none>           <none>
+shippingservice-2               1/1     Running     0               2d19h   10.233.89.25    aiops-k8s-08   <none>           <none>
+"""
+
+
+# def query_system_information(query: Annotated[str, "query question"]) -> str:
+#     """
+#     Use RAG approach to retrieve information from system_info.txt
+
+#     Args:
+#         query: User's query question
+
+#     Returns:
+#         Retrieved relevant information
+#     """
+#     # Read system_info.txt file
+#     base_path = os.path.dirname(
+#         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#     )
+#     system_info_path = os.path.join(base_path, "data", "system_info.txt")
+#     if not os.path.exists(system_info_path):
+#         return "system_info.txt file not found"
+
+#     try:
+#         with open(system_info_path, "r", encoding="utf-8") as f:
+#             content = f.read()
+#     except Exception as e:
+#         return f"Failed to read system_info.txt: {str(e)}"
+
+#     # Split text into paragraphs
+#     paragraphs = [p.strip() for p in content.split("\n\n") if p.strip()]
+
+#     # Construct prompt
+#     prompt = f"""As a system information retrieval assistant, please help me find the most relevant information from the system information below.
+
+# Question: {query}
+
+# System Information:
+# {content}
+
+# Please return only the relevant information without any explanation or comments. If no relevant information is found, return "No relevant information found"."""
+
+#     # Use LLM for retrieval
+#     response = chat(prompt)
+
+#     return response
 
 
 # result = trace_anomaly_detection("2025-05-06T00:00:00Z", "2025-05-06T00:10:00Z")
