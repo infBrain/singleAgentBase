@@ -1,0 +1,52 @@
+**All Nodes**:
+['aiops-k8s-01', 'aiops-k8s-02', 'aiops-k8s-03', 'aiops-k8s-04', 'aiops-k8s-05', 'aiops-k8s-06','aiops-k8s-07', 'aiops-k8s-08', 'k8s-master1', 'k8s-master2', 'k8s-master3']
+
+**All services**:
+['adservice', 'cartservice', 'currencyservice', 'productcatalogservice', 'checkoutservice','recommendationservice', 'shippingservice','emailservice', 'paymentservice']
+Each service has three pods, e.g. adservice has three pods adservice-0, adservice-1, adservice-2
+
+**Relationship between Services**:
+A->B means service A call service B.
+frontend->adservice,frontend->productcatalogservice,frontend->currencyservice,frontend->recommendationservice,cartservice,checkoutservice->paymentservice->shippingservice->emailservice
+
+
+**All metrics**:
+apm_metric_names = ["client_error_ratio","error_ratio","request","response","rrt","server_error_ratio","timeout"]
+infra_pod_metric_names = ["pod_cpu_usage", "pod_fs_reads_bytes", "pod_fs_writes_bytes", "pod_network_receive_bytes", "pod_network_receive_packets", "pod_network_transmit_bytes", "pod_network_transmit_packets", "pod_processes"]
+infra_node_metric_names = ["node_cpu_usage_rate", "node_filesystem_usage_rate", "node_memory_usage_rate", "node_network_receive_packets_total", "node_network_transmit_packets_total", "node_sockstat_TCP_inuse"]
+
+
+**Kubernetes info**
+NAME                            READY   STATUS      RESTARTS        AGE     IP              NODE           NOMINATED NODE   READINESS GATES
+adservice-0                     1/1     Running     8 (4m14s ago)   7d5h    10.233.89.223   aiops-k8s-08   <none>           <none>
+adservice-1                     1/1     Running     12 (14m ago)    7d5h    10.233.81.32    aiops-k8s-03   <none>           <none>
+adservice-2                     1/1     Running     5 (63m ago)     7d5h    10.233.85.74    aiops-k8s-07   <none>           <none>
+cartservice-0                   1/1     Running     2 (14h ago)     7d5h    10.233.81.73    aiops-k8s-03   <none>           <none>
+cartservice-1                   1/1     Running     2 (14h ago)     7d5h    10.233.78.180   aiops-k8s-01   <none>           <none>
+cartservice-2                   1/1     Running     2 (14h ago)     7d5h    10.233.77.46    aiops-k8s-04   <none>           <none>
+checkoutservice-0               1/1     Running     1 (3d ago)      7d5h    10.233.85.52    aiops-k8s-07   <none>           <none>
+checkoutservice-1               1/1     Running     1 (3d ago)      7d5h    10.233.81.234   aiops-k8s-03   <none>           <none>
+checkoutservice-2               1/1     Running     1 (3d ago)      7d5h    10.233.77.2     aiops-k8s-04   <none>           <none>
+currencyservice-0               1/1     Running     2 (7h3m ago)    2d22h   10.233.85.212   aiops-k8s-07   <none>           <none>
+currencyservice-1               1/1     Running     2 (7h3m ago)    2d22h   10.233.81.6     aiops-k8s-03   <none>           <none>
+currencyservice-2               1/1     Running     2 (7h3m ago)    2d22h   10.233.79.185   aiops-k8s-06   <none>           <none>
+emailservice-0                  1/1     Running     4 (11h ago)     7d5h    10.233.85.75    aiops-k8s-07   <none>           <none>
+emailservice-1                  1/1     Running     4 (11h ago)     7d5h    10.233.79.60    aiops-k8s-06   <none>           <none>
+emailservice-2                  1/1     Running     4 (11h ago)     7d5h    10.233.78.139   aiops-k8s-01   <none>           <none>
+example-ant-29107680-n6c8f      1/1     Running     0               15h     10.233.74.15    aiops-k8s-05   <none>           <none>
+frontend-0                      1/1     Running     0               7d5h    10.233.85.77    aiops-k8s-07   <none>           <none>
+frontend-1                      1/1     Running     0               7d5h    10.233.81.88    aiops-k8s-03   <none>           <none>
+frontend-2                      1/1     Running     0               7d5h    10.233.74.117   aiops-k8s-05   <none>           <none>
+paymentservice-0                1/1     Running     3 (19h ago)     7d5h    10.233.81.216   aiops-k8s-03   <none>           <none>
+paymentservice-1                1/1     Running     3 (19h ago)     7d5h    10.233.89.213   aiops-k8s-08   <none>           <none>
+paymentservice-2                1/1     Running     3 (19h ago)     7d5h    10.233.78.103   aiops-k8s-01   <none>           <none>
+productcatalogservice-0         1/1     Running     1 (2d23h ago)   3d6h    10.233.74.105   aiops-k8s-05   <none>           <none>
+productcatalogservice-1         1/1     Running     1 (2d23h ago)   3d6h    10.233.81.242   aiops-k8s-03   <none>           <none>
+productcatalogservice-2         1/1     Running     1 (2d23h ago)   3d6h    10.233.85.21    aiops-k8s-07   <none>           <none>
+recommendationservice-0         1/1     Running     1 (25h ago)     2d7h    10.233.85.42    aiops-k8s-07   <none>           <none>
+recommendationservice-1         1/1     Running     1 (25h ago)     2d7h    10.233.81.146   aiops-k8s-03   <none>           <none>
+recommendationservice-2         1/1     Running     1 (25h ago)     2d7h    10.233.89.86    aiops-k8s-08   <none>           <none>
+redis-cart-0                    1/1     Running     0               7d5h    10.233.89.187   aiops-k8s-08   <none>           <none>
+shippingservice-0               1/1     Running     0               2d19h   10.233.81.210   aiops-k8s-03   <none>           <none>
+shippingservice-1               1/1     Running     0               2d19h   10.233.85.163   aiops-k8s-07   <none>           <none>
+shippingservice-2               1/1     Running     0               2d19h   10.233.89.25    aiops-k8s-08   <none>           <none>

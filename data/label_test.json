@@ -1,0 +1,221 @@
+[
+     {
+        "fault_category": "pod fault",
+        "fault_type": "pod failure",
+        "instance_type": "pod",
+        "service": "tidb-tidb",
+        "instance": [
+            "tidb-tidb-0",
+            "tidb-tidb"
+        ],
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-16T21:10:11Z",
+        "end_time": "2025-06-16T21:29:11Z",
+        "uuid": "3260fa48-316",
+        "key_observations": [
+            {
+                "type": "metric",
+                "keyword": [
+                    "block_cache_size"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "connection_count"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "qps"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "uptime"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "cpu_usage"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "memory_usage"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "connection_count",
+            "uptime",
+            "qps",
+            "block_cache_size",
+            "tidb-tidb"
+        ],
+        "fault_description": [
+            "pod crash",
+            "pod terminated unexpectedly",
+            "container exit",
+            "pod failure"
+        ]
+    },
+     {
+        "fault_category": "pod fault",
+        "fault_type": "pod failure",
+        "instance_type": "pod",
+        "service": "tidb-pd",
+        "instance": [
+            "tidb-pd-0",
+            "tidb-pd"
+        ],
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-17T21:10:07Z",
+        "end_time": "2025-06-17T21:28:07Z",
+        "uuid": "0a9fce75-340",
+        "key_observations": [
+            {
+                "type": "log",
+                "keyword": [
+                    "failure"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "timeout"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "abnormal_region_count",
+                    "leader_count",
+                    "region_health"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "abnormal_region_count",
+            "region_health",
+            "leader_count",
+            "tidb-pd"
+        ],
+        "fault_description": [
+            "pod crash",
+            "pod terminated unexpectedly",
+            "container exit",
+            "pod failure"
+        ]
+    },
+    {
+        "fault_category": "io fault",
+        "fault_type": "io fault",
+        "instance_type": "pod",
+        "service": "tidb-tikv",
+        "instance": [
+            "tidb-tikv-0",
+            "tidb-tikv"
+        ],
+        "volumePath": "/var/lib/tikv",
+        "path": "/var/lib/tikv/**/*",
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-16T22:10:12Z",
+        "end_time": "2025-06-16T22:15:12Z",
+        "uuid": "332adc3a-317",
+        "key_observations": [
+            {
+                "type": "metric",
+                "keyword": [
+                    "io_util",
+                    "region_pending"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "raft_apply_wait"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "snapshot_apply_count",
+                    "store_size"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "memory_usage"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "region_pending",
+            "io_util",
+            "raft_apply_wait",
+            "memory_usage",
+            "tidb",
+            "io"
+        ],
+        "fault_description": [
+            "io fault",
+            "filesystem call error",
+            "read operation error",
+            "write operation error",
+            "permission denied error",
+            "file descriptor error"
+        ]
+    },
+    {
+        "fault_category": "stress test",
+        "fault_type": "cpu stress",
+        "instance_type": "service",
+        "service": "emailservice",
+        "instance": "emailservice",
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-05T16:10:02Z",
+        "end_time": "2025-06-05T16:31:02Z",
+        "uuid": "345fbe93-80",
+        "key_observations": [
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_processes"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "rrt",
+                    "rrt_max"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_cpu_usage"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "pod_cpu_usage"
+        ],
+        "fault_description": [
+            "high CPU utilization",
+            "CPU saturation",
+            "CPU overload",
+            "CPU usage spike",
+            "cpu stress"
+        ]
+    }
+]
