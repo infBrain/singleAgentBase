@@ -1,5 +1,632 @@
 [
-     {
+    {
+        "fault_category": "stress test",
+        "fault_type": "cpu stress",
+        "instance_type": "service",
+        "service": "emailservice",
+        "instance": "emailservice",
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-05T16:10:02Z",
+        "end_time": "2025-06-05T16:31:02Z",
+        "uuid": "345fbe93-80",
+        "key_observations": [
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_processes"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "rrt",
+                    "rrt_max"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_cpu_usage"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "pod_cpu_usage"
+        ],
+        "fault_description": [
+            "high CPU utilization",
+            "CPU saturation",
+            "CPU overload",
+            "CPU usage spike",
+            "cpu stress"
+        ]
+    },
+    {
+        "fault_category": "network attack",
+        "fault_type": "network corrupt",
+        "instance_type": "service",
+        "service": "",
+        "instance": [
+            "checkoutservice",
+            "shippingservice"
+        ],
+        "source": "checkoutservice",
+        "destination": "shippingservice",
+        "start_time": "2025-06-05T17:10:04Z",
+        "end_time": "2025-06-05T17:33:04Z",
+        "uuid": "74a44ae7-81",
+        "key_observations": [
+            {
+                "type": "log",
+                "keyword": [
+                    "Error",
+                    "while",
+                    "dialing"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "failure"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "Rpc",
+                    "error",
+                    "code",
+                    "canceled",
+                    "desc",
+                    "context canceled"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "timeout"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "unavailable"
+                ]
+            },
+            {
+                "type": "trace",
+                "subtype": "latency_anomalies",
+                "keyword": [
+                    "checkoutservice",
+                    "frontend"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "client_error",
+                    "client_error_ratio",
+                    "error",
+                    "error_ratio"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "rrt",
+                    "rrt_max"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "request",
+                    "response"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_network_receive_bytes",
+                    "pod_network_receive_packets",
+                    "pod_network_transmit_bytes",
+                    "pod_network_transmit_packets"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "rrt",
+            "rrt_max",
+            "request",
+            "response",
+            "pod_network_receive_bytes",
+            "pod_network_receive_packets",
+            "pod_network_transmit_bytes",
+            "pod_network_transmit_packets"
+        ],
+        "fault_description": [
+            "packet corruption",
+            "data corruption",
+            "bit errors on network",
+            "corrupted packets"
+        ]
+    },
+    {
+        "fault_category": "pod fault",
+        "fault_type": "pod failure",
+        "instance_type": "service",
+        "service": "cartservice",
+        "instance": "cartservice",
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-05T18:10:05Z",
+        "end_time": "2025-06-05T18:34:05Z",
+        "uuid": "38ee3d45-82",
+        "key_observations": [
+            {
+                "type": "log",
+                "keyword": [
+                    "Connection",
+                    "refused"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "Error",
+                    "while",
+                    "dialing"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "failure"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "unavailable"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "client_error",
+                    "client_error_ratio",
+                    "error",
+                    "error_ratio"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_cpu_usage"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_network_receive_bytes",
+                    "pod_network_receive_packets",
+                    "pod_network_transmit_bytes",
+                    "pod_network_transmit_packets"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "client_error",
+            "client_error_ratio",
+            "error",
+            "error_ratiopod_processes",
+            "request",
+            "response"
+        ],
+        "fault_description": [
+            "pod crash",
+            "pod terminated unexpectedly",
+            "container exit",
+            "pod failure"
+        ]
+    },
+    {
+        "fault_category": "node fault",
+        "fault_type": "node memory stress",
+        "instance_type": "node",
+        "service": "",
+        "instance": "aiops-k8s-06",
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-05T19:10:07Z",
+        "end_time": "2025-06-05T19:33:07Z",
+        "uuid": "b1ab098d-83",
+        "key_observations": [
+            {
+                "type": "metric",
+                "keyword": [
+                    "node_memory_usage_rate",
+                    "node_memory_MemAvailable_bytes"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "node_memory_usage_rate"
+        ],
+        "fault_description": [
+            "node memory exhaustion",
+            "node memory saturation",
+            "node high memory usage",
+            "node memory leak",
+            "node memory stress"
+        ]
+    },
+    {
+        "fault_category": "network attack",
+        "fault_type": "network corrupt",
+        "instance_type": "service",
+        "service": "",
+        "instance": [
+            "checkoutservice",
+            "paymentservice"
+        ],
+        "source": "checkoutservice",
+        "destination": "paymentservice",
+        "start_time": "2025-06-05T20:10:09Z",
+        "end_time": "2025-06-05T20:34:09Z",
+        "uuid": "27956295-84",
+        "key_observations": [
+            {
+                "type": "log",
+                "keyword": [
+                    "Error",
+                    "while",
+                    "dialing"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "Rpc",
+                    "error",
+                    "code",
+                    "canceled",
+                    "desc",
+                    "context canceled"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "timeout"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "unavailable"
+                ]
+            },
+            {
+                "type": "trace",
+                "subtype": "latency_anomalies",
+                "keyword": [
+                    "checkoutservice",
+                    "frontend"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "rrt",
+                    "rrt_max"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_network_receive_bytes",
+                    "pod_network_receive_packets",
+                    "pod_network_transmit_bytes",
+                    "pod_network_transmit_packets"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "rrt",
+            "rrt_max",
+            "request",
+            "response",
+            "pod_network_receive_bytes",
+            "pod_network_receive_packets",
+            "pod_network_transmit_bytes",
+            "pod_network_transmit_packets"
+        ],
+        "fault_description": [
+            "packet corruption",
+            "data corruption",
+            "bit errors on network",
+            "corrupted packets"
+        ]
+    },
+    {
+        "fault_category": "network attack",
+        "fault_type": "network delay",
+        "instance_type": "service",
+        "service": "",
+        "instance": [
+            "frontend",
+            "productcatalogservice"
+        ],
+        "source": "frontend",
+        "destination": "productcatalogservice",
+        "start_time": "2025-06-05T21:10:10Z",
+        "end_time": "2025-06-05T21:23:10Z",
+        "uuid": "8a7a8a00-85",
+        "key_observations": [
+            {
+                "type": "trace",
+                "subtype": "latency_anomalies",
+                "keyword": [
+                    "frontend"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "rrt",
+                    "rrt_max"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "request",
+                    "response"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_network_receive_bytes",
+                    "pod_network_receive_packets",
+                    "pod_network_transmit_bytes",
+                    "pod_network_transmit_packets"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "rrt",
+            "rrt_max",
+            "request",
+            "response",
+            "pod_network_receive_bytes",
+            "pod_network_receive_packets",
+            "pod_network_transmit_bytes",
+            "pod_network_transmit_packets"
+        ],
+        "fault_description": [
+            "high network latency",
+            "increased RTT",
+            "network delay spike",
+            "elevated transmission delay",
+            "increased round-trip time",
+            "elevated round-trip duration"
+        ]
+    },
+    {
+        "fault_category": "node fault",
+        "fault_type": "node cpu stress",
+        "instance_type": "node",
+        "service": "",
+        "instance": "aiops-k8s-03",
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-05T23:10:13Z",
+        "end_time": "2025-06-05T23:24:13Z",
+        "uuid": "ef2a4fbb-87",
+        "key_observations": [
+            {
+                "type": "metric",
+                "keyword": [
+                    "node_cpu_usage_rate"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "node_cpu_usage_rate"
+        ],
+        "fault_description": [
+            "node CPU overload",
+            "node high CPU usage",
+            "node CPU saturation",
+            "node CPU spike",
+            "node cpu stress"
+        ]
+    },
+    {
+        "fault_category": "stress test",
+        "fault_type": "cpu stress",
+        "instance_type": "service",
+        "service": "currencyservice",
+        "instance": "currencyservice",
+        "source": "",
+        "destination": "",
+        "start_time": "2025-06-06T00:10:14Z",
+        "end_time": "2025-06-06T00:29:14Z",
+        "uuid": "233e0282-88",
+        "key_observations": [
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_cpu_usage"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "pod_processes"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "rrt",
+                    "rrt_max"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "pod_cpu_usage"
+        ],
+        "fault_description": [
+            "high CPU utilization",
+            "CPU saturation",
+            "CPU overload",
+            "CPU usage spike",
+            "cpu stress"
+        ]
+    },
+    {
+        "fault_category": "network attack",
+        "fault_type": "network loss",
+        "instance_type": "service",
+        "service": "",
+        "instance": [
+            "frontend",
+            "adservice"
+        ],
+        "source": "frontend",
+        "destination": "adservice",
+        "start_time": "2025-06-06T01:10:16Z",
+        "end_time": "2025-06-06T01:21:16Z",
+        "uuid": "5f904167-89",
+        "key_observations": [
+            {
+                "type": "log",
+                "keyword": [
+                    "deadlineexceeded"
+                ]
+            },
+            {
+                "type": "trace",
+                "subtype": "latency_anomalies",
+                "keyword": [
+                    "frontend"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "rrt",
+                    "rrt_max"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "rrt",
+            "rrt_max",
+            "request",
+            "response",
+            "pod_network_receive_bytes",
+            "pod_network_receive_packets",
+            "pod_network_transmit_bytes",
+            "pod_network_transmit_packets"
+        ],
+        "fault_description": [
+            "packet loss",
+            "network packet drop",
+            "high loss rate",
+            "dropped packets"
+        ]
+    },
+    {
+        "fault_category": "network attack",
+        "fault_type": "network corrupt",
+        "instance_type": "service",
+        "service": "",
+        "instance": [
+            "checkoutservice",
+            "shippingservice"
+        ],
+        "source": "checkoutservice",
+        "destination": "shippingservice",
+        "start_time": "2025-06-06T02:02:59Z",
+        "end_time": "2025-06-06T02:15:59Z",
+        "uuid": "d3bd27f3-90",
+        "key_observations": [
+            {
+                "type": "log",
+                "keyword": [
+                    "Error",
+                    "while",
+                    "dialing"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "failure"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "Rpc",
+                    "error",
+                    "code",
+                    "canceled",
+                    "desc",
+                    "context canceled"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "timeout"
+                ]
+            },
+            {
+                "type": "log",
+                "keyword": [
+                    "unavailable"
+                ]
+            },
+            {
+                "type": "trace",
+                "subtype": "latency_anomalies",
+                "keyword": [
+                    "checkoutservice",
+                    "frontend"
+                ]
+            },
+            {
+                "type": "metric",
+                "keyword": [
+                    "rrt",
+                    "rrt_max"
+                ]
+            }
+        ],
+        "key_metrics": [
+            "rrt",
+            "rrt_max",
+            "request",
+            "response",
+            "pod_network_receive_bytes",
+            "pod_network_receive_packets",
+            "pod_network_transmit_bytes",
+            "pod_network_transmit_packets"
+        ],
+        "fault_description": [
+            "packet corruption",
+            "data corruption",
+            "bit errors on network",
+            "corrupted packets"
+        ]
+    },
+    {
         "fault_category": "pod fault",
         "fault_type": "pod failure",
         "instance_type": "pod",
@@ -65,7 +692,7 @@
             "pod failure"
         ]
     },
-     {
+    {
         "fault_category": "pod fault",
         "fault_type": "pod failure",
         "instance_type": "pod",
@@ -173,49 +800,6 @@
             "write operation error",
             "permission denied error",
             "file descriptor error"
-        ]
-    },
-    {
-        "fault_category": "stress test",
-        "fault_type": "cpu stress",
-        "instance_type": "service",
-        "service": "emailservice",
-        "instance": "emailservice",
-        "source": "",
-        "destination": "",
-        "start_time": "2025-06-05T16:10:02Z",
-        "end_time": "2025-06-05T16:31:02Z",
-        "uuid": "345fbe93-80",
-        "key_observations": [
-            {
-                "type": "metric",
-                "keyword": [
-                    "pod_processes"
-                ]
-            },
-            {
-                "type": "metric",
-                "keyword": [
-                    "rrt",
-                    "rrt_max"
-                ]
-            },
-            {
-                "type": "metric",
-                "keyword": [
-                    "pod_cpu_usage"
-                ]
-            }
-        ],
-        "key_metrics": [
-            "pod_cpu_usage"
-        ],
-        "fault_description": [
-            "high CPU utilization",
-            "CPU saturation",
-            "CPU overload",
-            "CPU usage spike",
-            "cpu stress"
         ]
     }
 ]

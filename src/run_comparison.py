@@ -6,6 +6,7 @@ import argparse
 import json
 import datetime
 
+from openai import project
 from tqdm import tqdm
 
 # Add src to sys.path
@@ -14,7 +15,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.agent.mcp_rca_agent import run_agent as run_mcp_agent
 from src.agent.rca_agent import run_rca_agent
 from src.tools.rca_output import parse_rca_json_output
-
+from src.tools.utils import _convert_to_beijing
 
 def build_system_prompt(start_time, end_time):
     return f"""You are a Site Reliability Engineer (SRE) agent responsible for Root Cause Analysis (RCA).
@@ -74,10 +75,31 @@ def build_user_message(start_time, end_time):
     return f"A fault occurred from  {start_time} to {end_time}. please locate the issue root cause"
 
 
-async def run_mcp_only(start_time, end_time, sls_endpoints=None, cms_endpoints=None):
-    system_prompt = build_system_prompt(start_time, end_time)
-    user_message = build_user_message(start_time, end_time)
-    mcp_query = f"{system_prompt}\n\nUser Request:\n{user_message}\n"
+def build_project_details(workspace, region, project):
+    return f"""Your UModel workspace is '{workspace}' in region '{region}', and the SLS project is '{project}'.
+Use this information when configuring your data source connections.
+"""
+
+## MCP Agent Execution
+async def run_mcp_only(
+    start_time,
+    end_time,
+    sls_endpoints="cn-heyuan=cn-heyuan.log.aliyuncs.com",
+    cms_endpoints="cn-heyuan=metrics.cn-heyuan.aliyuncs.com",
+    ground_truth=None,
+    uuid=None,
+    delay=0,
+):
+    prompt_start_time=_convert_to_beijing(start_time, delay=201*24*60)
+    prompt_end_time=_convert_to_beijing(end_time, delay=201*24*60)
+    system_prompt = build_system_prompt(prompt_start_time, prompt_end_time)
+    user_message = build_user_message(prompt_start_time, prompt_end_time)
+    project_details = build_project_details(
+        workspace="default-cms-1102382765107602-cn-heyuan",
+        region="cn-heyuan",
+        project="default-cms-1102382765107602-cn-heyuan",
+    )
+    mcp_query = f"{system_prompt}\n{project_details}\nUser Request:\n{user_message}\n"
 
     python_executable = sys.executable
     access_key_id = os.environ.get("ALIBABA_CLOUD_ACCESS_KEY_ID")
@@ -89,20 +111,31 @@ async def run_mcp_only(start_time, end_time, sls_endpoints=None, cms_endpoints=N
         url_or_cmd=python_executable,
         access_key_id=access_key_id,
         access_key_secret=access_key_secret,
+        # sls_endpoints=sls_endpoints if sls_endpoints else "cn-heyuan=default-cms-1102382765107602-cn-heyuan",
+        # cms_endpoints=cms_endpoints if cms_endpoints else "cn-heyuan=default-cms-1102382765107602-cn-heyuan",
         sls_endpoints=sls_endpoints,
-        cms_endpoints=cms_endpoints,
+        cms_endpoints=cms_endpoints
     )
 
     mcp_result = parse_rca_json_output(mcp_result_text)
+    if uuid:
+        mcp_result["uuid"] = uuid
     mcp_result["start_time"] = start_time
     mcp_result["end_time"] = end_time
+    if ground_truth:
+        mcp_result["ground_truth"] = ground_truth
     return mcp_result
 
 
-def run_rca_only(start_time, end_time, ground_truth=None):
+## Local RCA Agent Execution
+def run_rca_only(start_time, end_time, uuid=None, instance_type=None, ground_truth=None):
     system_prompt = build_system_prompt(start_time, end_time)
     user_message = build_user_message(start_time, end_time)
     rca_result = run_rca_agent(start_time, end_time, system_prompt, user_message)
+    if uuid:
+        rca_result["uuid"] = uuid
+    if instance_type:
+        rca_result["instance_type"] = instance_type
     rca_result["start_time"] = start_time
     rca_result["end_time"] = end_time
     if ground_truth:
@@ -110,104 +143,96 @@ def run_rca_only(start_time, end_time, ground_truth=None):
     return rca_result
 
 
-async def run_comparison(
-    workspace,
-    region,
-    project,
-    start_time,
-    end_time,
-    sls_endpoints=None,
-    cms_endpoints=None,
-):
-    print("=" * 60)
-    print("STARTING AGENT COMPARISON")
-    print("=" * 60)
-    print(f"Time Range: {start_time} to {end_time}")
-    print("=" * 60)
+# async def run_comparison(
+#     workspace,
+#     region,
+#     project,
+#     start_time,
+#     end_time,
+#     sls_endpoints=None,
+#     cms_endpoints=None,
+# ):
+#     print("=" * 60)
+#     print("STARTING AGENT COMPARISON")
+#     print("=" * 60)
+#     print(f"Time Range: {start_time} to {end_time}")
+#     print("=" * 60)
 
-    # --- 1. Run MCP Agent ---
-    print("\n" + "-" * 20 + " Running MCP Agent " + "-" * 20 + "\n")
-    mcp_result = await run_mcp_only(
-        start_time=start_time,
-        end_time=end_time,
-        sls_endpoints=sls_endpoints,
-        cms_endpoints=cms_endpoints,
-    )
+#     # --- 1. Run MCP Agent ---
+#     print("\n" + "-" * 20 + " Running MCP Agent " + "-" * 20 + "\n")
+#     mcp_result = await run_mcp_only(
+#         start_time=start_time,
+#         end_time=end_time,
+#         sls_endpoints=sls_endpoints,
+#         cms_endpoints=cms_endpoints,
+#     )
 
-    # --- 2. Run Local RCA Agent ---
-    print("\n" + "-" * 20 + " Running Local RCA Agent " + "-" * 20 + "\n")
-    try:
-        rca_result = run_rca_only(
-            start_time=start_time,
-            end_time=end_time,
-        )
-    except Exception as e:
-        rca_result = {"error": str(e)}
+#     # --- 2. Run Local RCA Agent ---
+#     print("\n" + "-" * 20 + " Running Local RCA Agent " + "-" * 20 + "\n")
+#     try:
+#         rca_result = run_rca_only(
+#             start_time=start_time,
+#             end_time=end_time,
+#         )
+#     except Exception as e:
+#         rca_result = {"error": str(e)}
 
-    # --- 3. Compare Results ---
-    print("\n" + "=" * 60)
-    print("COMPARISON RESULT")
-    print("=" * 60)
+#     # --- 3. Compare Results ---
+#     print("\n" + "=" * 60)
+#     print("COMPARISON RESULT")
+#     print("=" * 60)
 
-    print("\n--- MCP Agent Output (JSON) ---")
-    print(json.dumps(mcp_result, indent=2, ensure_ascii=False))
+#     print("\n--- MCP Agent Output (JSON) ---")
+#     print(json.dumps(mcp_result, indent=2, ensure_ascii=False))
 
-    print("\n--- Local RCA Agent Output (JSON) ---")
-    print(json.dumps(rca_result, indent=2, ensure_ascii=False))
+#     print("\n--- Local RCA Agent Output (JSON) ---")
+#     print(json.dumps(rca_result, indent=2, ensure_ascii=False))
 
-    # Save comparison to file
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    result_dir = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "result"
-    )
-    if not os.path.exists(result_dir):
-        os.makedirs(result_dir)
+#     # Save comparison to file
+#     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+#     result_dir = os.path.join(
+#         os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "result"
+#     )
+#     if not os.path.exists(result_dir):
+#         os.makedirs(result_dir)
 
-    filename = f"comparison_{timestamp}.txt"
-    filepath = os.path.join(result_dir, filename)
+#     filename = f"comparison_{timestamp}.txt"
+#     filepath = os.path.join(result_dir, filename)
 
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write("=== MCP Agent Output ===\n")
-        f.write(json.dumps(mcp_result, indent=2, ensure_ascii=False) + "\n\n")
-        f.write("=== Local RCA Agent Output ===\n")
-        f.write(json.dumps(rca_result, indent=2, ensure_ascii=False) + "\n")
+#     with open(filepath, "w", encoding="utf-8") as f:
+#         f.write("=== MCP Agent Output ===\n")
+#         f.write(json.dumps(mcp_result, indent=2, ensure_ascii=False) + "\n\n")
+#         f.write("=== Local RCA Agent Output ===\n")
+#         f.write(json.dumps(rca_result, indent=2, ensure_ascii=False) + "\n")
 
-    print(f"\nResults saved to {filepath}")
+#     print(f"\nResults saved to {filepath}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Compare MCP Agent and Local RCA Agent"
     )
-    parser.add_argument(
-        "--workspace", default="aiops-challenges-2025", help="UModel Workspace Name"
-    )
-    parser.add_argument("--region", default="cn-heyuan", help="Region ID")
-    parser.add_argument(
-        "--project",
-        default="cms-aiops-challenges-2025-dbj7stfif6apnzrb",
-        help="SLS Project Name",
-    )
     # parser.add_argument("--start-time", default="2025-06-05T16:10:02Z", help="Start time in ISO format")
     # parser.add_argument("--end-time", default="2025-06-05T16:31:02Z", help="End time in ISO format")
     # parser.add_argument("--task", default="please locate the issue root cause", help="Description of the problem")
-    parser.add_argument(
-        "--sls-endpoints", help="Override SLS endpoints (e.g. 'cn-region=host')"
-    )
-    parser.add_argument(
-        "--cms-endpoints", help="Override CMS endpoints (e.g. 'cn-region=host')"
-    )
+    # parser.add_argument(
+    #     "--sls-endpoints", help="Override SLS endpoints (e.g. 'cn-region=host')"
+    # )
+    # parser.add_argument(
+    #     "--cms-endpoints", help="Override CMS endpoints (e.g. 'cn-region=host')"
+    # )
     parser.add_argument(
         "--mode",
         choices=["mcp", "rca", "both"],
-        default="rca",
+        default="mcp",
+        # default="rca",
         help="Run MCP agent, local RCA agent, or both",
     )
 
     args = parser.parse_args()
     result_answers = []
     try:
-        with open(os.path.join("data", "label.json"), "r", encoding="utf-8") as f:
+        with open(os.path.join("data", "label_test.json"), "r", encoding="utf-8") as f:
             labels = json.load(f)
             # labels = labels[:1]  # For testing, process only the first case
 
@@ -218,20 +243,21 @@ if __name__ == "__main__":
             if args.mode == "mcp":
                 result = asyncio.run(
                     run_mcp_only(
+                        uuid=case.get("uuid"),
                         start_time=start_time,
                         end_time=end_time,
-                        sls_endpoints=args.sls_endpoints,
-                        cms_endpoints=args.cms_endpoints,
+                        ground_truth=case.get("instance"),
                     )
                 )
                 result_answers.append(json.dumps(result, indent=2, ensure_ascii=False))
                 print(json.dumps(result, indent=2, ensure_ascii=False))
             elif args.mode == "rca":
                 result = run_rca_only(
+                    uuid=case.get("uuid"),
                     start_time=start_time,
                     end_time=end_time,
                     instance_type=case.get("instance_type"),
-                    ground_truth=case.get("instance")
+                    ground_truth=case.get("instance"),
                 )
                 result_answers.append(json.dumps(result, indent=2, ensure_ascii=False))
                 print(json.dumps(result, indent=2, ensure_ascii=False))

@@ -120,6 +120,30 @@ def _convert_to_utc(beijing_time_str: str) -> datetime:
     beijing_time = beijing_tz.localize(datetime.strptime(beijing_time_str, '%Y-%m-%d %H:%M:%S'))
     return beijing_time.astimezone(utc_tz)
 
+def _convert_to_beijing(utc_time_str: str, delay: int = 0) -> datetime:
+    """
+    Convert UTC time string to Beijing datetime object
+    
+    Args:
+        utc_time_str: Time string in UTC format (e.g. '2025-05-15T21:10:07Z')
+        delay: Time shift in minutes (default: 0)
+    """
+    utc_tz = pytz.UTC
+    beijing_tz = pytz.timezone('Asia/Shanghai')
+    
+    if utc_time_str.endswith('Z'):
+        dt = datetime.strptime(utc_time_str, "%Y-%m-%dT%H:%M:%SZ")
+    else:
+        dt = datetime.strptime(utc_time_str, "%Y-%m-%dT%H:%M:%S")
+    
+    utc_dt = utc_tz.localize(dt)
+    beijing_dt = utc_dt.astimezone(beijing_tz)
+    
+    if delay != 0:
+        beijing_dt = beijing_dt + timedelta(minutes=delay)
+        
+    return beijing_dt
+
 def _get_date_range(start_utc: datetime, end_utc: datetime) -> List[str]:
     """
     Get all dates within the UTC time range
