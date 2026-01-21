@@ -1,0 +1,23 @@
+
+Fault Location    Fault Type               Fault Description                   Fault Manifestation (Signals)
+---------------------------------------------------------------------------------------------------------------------
+SERVICE           network_delay            Network latency/delay               Metrics, Traces
+SERVICE           network_loss             Network packet loss                 Metrics, Traces
+SERVICE           network_corrupt          Network packet corruption           Metrics, Traces
+SERVICE           cpu_stress               High CPU load/Stress                Metrics
+SERVICE           memory_stress            High Memory usage/Stress            Metrics
+SERVICE           pod_failure              Pod crash/failure                   Metrics, Traces, Logs
+SERVICE           pod_kill                 Pod killed (OOM/Eviction)           Metrics, Traces, Logs
+SERVICE           jvm-exception            JVM custom exception thrown         Metrics, Logs
+SERVICE           jvm-gc                   JVM Garbage Collection triggered    Metrics, Logs
+SERVICE           jvm-latency              JVM method latency injection        Metrics, Logs
+SERVICE           jvm-cpu-stress           JVM-specific CPU stress             Metrics, Logs
+SERVICE           dns-error                DNS resolution failure              Metrics, Traces, Logs
+NODE              node_cpu                 Node CPU stress                     Metrics
+NODE              node_disk                Node disk/IO fault                  Metrics
+NODE              node_network_loss        Node network packet loss            Metrics
+NODE              node_network_delay       Node network latency                Metrics
+SERVICE           target_port_misconfig    Service port misconfiguration       Metrics, Traces, Logs
+SERVICE           erroneous-code           Application logic error/bug         Metrics, Traces, Logs
+SERVICE           io-fault                 File system Read/Write error        Metrics, Logs
+
