@@ -144,6 +144,27 @@ def _convert_to_beijing(utc_time_str: str, delay: int = 0) -> datetime:
         
     return beijing_dt
 
+def _beijing_to_unix_seconds(beijing_time: datetime | str) -> int:
+    """
+    Convert Beijing time to Unix timestamp in seconds.
+
+    Args:
+        beijing_time: Beijing time as datetime or string (e.g. '2025-05-05 12:11:09')
+
+    Returns:
+        int: Unix timestamp in seconds
+    """
+    beijing_tz = pytz.timezone('Asia/Shanghai')
+    if isinstance(beijing_time, datetime):
+        if beijing_time.tzinfo is None:
+            local_dt = beijing_tz.localize(beijing_time)
+        else:
+            local_dt = beijing_time.astimezone(beijing_tz)
+    else:
+        dt = datetime.strptime(beijing_time, '%Y-%m-%d %H:%M:%S')
+        local_dt = beijing_tz.localize(dt)
+    return int(local_dt.timestamp())
+
 def _get_date_range(start_utc: datetime, end_utc: datetime) -> List[str]:
     """
     Get all dates within the UTC time range

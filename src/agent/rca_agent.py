@@ -64,18 +64,17 @@ def get_llm():
 
 # Define Tools
 @tool
-def search_metrics(query: str) -> str:
+def search_metrics(start_time: str, end_time: str, metric_name: str = "all", instance: str = "all") -> str:
     """
     Search and analyze metric anomalies.
-    Input should be a string with format: "start_time, end_time, metric_name, instance"
-    Example: "2025-05-05T10:11:31Z, 2025-05-05T10:29:31Z, node_cpu_usage_rate, all"
-    If you are not sure about metric_name or instance, use 'all'.
+    
+    Args:
+        start_time: Start time in format like 2025-06-05T23:24:13Z
+        end_time: End time in format like 2025-06-05T23:24:13Z
+        metric_name: Name of the metric to check. Defaults to 'all'.
+        instance: Name of the instance (service/pod/node) to check. Defaults to 'all'.
     """
     try:
-        parts = [p.strip() for p in query.split(",")]
-        if len(parts) != 4:
-            return "Error: Input must have 4 parts separated by commas: start_time, end_time, metric_name, instance"
-        start_time, end_time, metric_name, instance = parts
         return time_series_anomaly_detection(
             start_time, end_time, metric_name, instance
         )
@@ -84,34 +83,30 @@ def search_metrics(query: str) -> str:
 
 
 @tool
-def search_traces(query: str) -> str:
+def search_traces(start_time: str, end_time: str) -> str:
     """
     Detect anomalies in traces.
-    Input should be a string with format: "start_time, end_time"
-    Example: "2025-05-05T10:11:31Z, 2025-05-05T10:29:31Z"
+    
+    Args:
+        start_time: Start time in format like 2025-06-05T23:24:13Z
+        end_time: End time in format like 2025-06-05T23:24:13Z
     """
     try:
-        parts = [p.strip() for p in query.split(",")]
-        if len(parts) != 2:
-            return "Error: Input must have 2 parts separated by commas: start_time, end_time"
-        start_time, end_time = parts
         return trace_anomaly_detection(start_time, end_time)
     except Exception as e:
         return f"Error executing trace_anomaly_detection: {str(e)}"
 
 
 @tool
-def search_logs(query: str) -> str:
+def search_logs(start_time: str, end_time: str) -> str:
     """
     Detect anomalies in logs.
-    Input should be a string with format: "start_time, end_time"
-    Example: "2025-05-05T10:11:31Z, 2025-05-05T10:29:31Z"
+    
+    Args:
+        start_time: Start time in format like 2025-06-05T23:24:13Z
+        end_time: End time in format like 2025-06-05T23:24:13Z
     """
     try:
-        parts = [p.strip() for p in query.split(",")]
-        if len(parts) != 2:
-            return "Error: Input must have 2 parts separated by commas: start_time, end_time"
-        start_time, end_time = parts
         return log_anomaly_detection(start_time, end_time)
     except Exception as e:
         return f"Error executing log_anomaly_detection: {str(e)}"
@@ -131,18 +126,16 @@ def get_system_info() -> str:
 
 
 @tool
-def analyze_fault_type(query: str) -> str:
+def analyze_fault_type(start_time: str, end_time: str) -> str:
     """
     Analyze anomaly detection results to determine the main fault type.
     This tool uses a classifier to identify the likely failure category (e.g., Pod Memory, Network Delay) based on metric patterns.
-    Input should be a string with format: "start_time, end_time"
-    Example: "2025-05-05T10:11:31Z, 2025-05-05T10:29:31Z"
+    
+    Args:
+        start_time: Start time in format like 2025-06-05T23:24:13Z
+        end_time: End time in format like 2025-06-05T23:24:13Z
     """
     try:
-        parts = [p.strip() for p in query.split(",")]
-        if len(parts) != 2:
-            return "Error: Input must have 2 parts separated by commas: start_time, end_time"
-        start_time, end_time = parts
         return classifier(start_time, end_time)
     except Exception as e:
         return f"Error executing classifier: {str(e)}"
@@ -204,6 +197,7 @@ def run_rca_agent(start_time: str, end_time: str, system_prompt: str, user_promp
     # Just output the raw JSON string.
     # """
 
+    print('=================\n',tools[:1])
     agent_executor = create_react_agent(llm, tools, prompt=system_prompt)
 
     try:

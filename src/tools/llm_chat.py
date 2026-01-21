@@ -10,9 +10,9 @@ API_VERSION = os.environ.get("OPENAI_API_VERSION", "2024-03-01-preview")
 
 def chat(prompt):
     max_tokens = 4096  # range: [0, 4096]
-    if "deepseek" in MODEL_NAME.lower():
-        client = openai.OpenAI(api_key=API_KEY, base_url=BASE_URL)
-    elif "gpt" in MODEL_NAME.lower():
+    # if "deepseek" in MODEL_NAME.lower():
+        
+    if "gpt" in MODEL_NAME.lower():
         try:
             client = openai.AzureOpenAI(
                 azure_endpoint=BASE_URL,
@@ -25,7 +25,7 @@ def chat(prompt):
                 api_key=API_KEY,
             )
     else:
-        raise Exception("LLM model not founded.")
+        client = openai.OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
     # prompt = "上海天气怎么样？"
     completion = client.chat.completions.create(

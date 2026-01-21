@@ -1,4 +1,5 @@
 import asyncio
+from math import log
 import os
 from re import A
 import sys
@@ -15,7 +16,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.agent.mcp_rca_agent import run_mcp_agent
 from src.agent.rca_agent import run_rca_agent
 from src.tools.rca_output import parse_rca_json_output
-from src.tools.utils import _convert_to_beijing
+from src.tools.utils import _convert_to_beijing, _beijing_to_unix_seconds
+
 
 def build_system_prompt(start_time, end_time):
     return f"""You are a Site Reliability Engineer (SRE) agent responsible for Root Cause Analysis (RCA).
@@ -75,10 +77,15 @@ def build_user_message(start_time, end_time):
     return f"A fault occurred from  {start_time} to {end_time}. please locate the issue root cause"
 
 
-def build_project_details(workspace, region, project):
+def build_project_details(
+    workspace, region, project, logstore, metircstore, tracestore
+):
     return f"""Your UModel workspace is '{workspace}' in region '{region}', and the SLS project is '{project}'.
-Use this information when configuring your data source connections.
-"""
+    The logstore is '{logstore}', the metricstore is '{metircstore}', the tracestore is '{tracestore}'.
+    Use this information when configuring your data source connections.
+    Only use metric_set values from the list returned by umodel_list_metric_sets. Do not invent metric_set names.
+    """
+
 
 ## MCP Agent Execution
 async def run_mcp_only(
@@ -90,31 +97,46 @@ async def run_mcp_only(
     uuid=None,
     delay=0,
 ):
-    prompt_start_time=_convert_to_beijing(start_time, delay=201*24*60)
-    prompt_end_time=_convert_to_beijing(end_time, delay=201*24*60)
+    prompt_start_time = _beijing_to_unix_seconds(
+        _convert_to_beijing(start_time, delay=201 * 24 * 60)
+    )
+    prompt_end_time = _beijing_to_unix_seconds(
+        _convert_to_beijing(end_time, delay=201 * 24 * 60)
+    )
     system_prompt = build_system_prompt(prompt_start_time, prompt_end_time)
     user_message = build_user_message(prompt_start_time, prompt_end_time)
     project_details = build_project_details(
         workspace="default-cms-1102382765107602-cn-heyuan",
         region="cn-heyuan",
         project="default-cms-1102382765107602-cn-heyuan",
+        logstore="aiops-dataset-logs",
+        metircstore="aiops-dataset-metrics",
+        tracestore="aiops-dataset-traces",
     )
-    mcp_query = f"{system_prompt}\n{project_details}\nUser Request:\n{user_message}\n"
+    # mcp_query = f"{system_prompt}\n{project_details}\nUser Request:\n{user_message}\n"
 
-    python_executable = sys.executable
-    access_key_id = os.environ.get("ALIBABA_CLOUD_ACCESS_KEY_ID")
-    access_key_secret = os.environ.get("ALIBABA_CLOUD_ACCESS_KEY_SECRET")
+    # python_executable = sys.executable  # stdio mode need python executable
 
+    # access_key_id = os.environ.get("ALIBABA_CLOUD_ACCESS_KEY_ID")
+    # access_key_secret = os.environ.get("ALIBABA_CLOUD_ACCESS_KEY_SECRET")
+
+    # mcp_result_text = await run_mcp_agent(
+    #     query=mcp_query,
+    #     connection_mode="stdio",
+    #     url_or_cmd=python_executable,
+    #     access_key_id=access_key_id,
+    #     access_key_secret=access_key_secret,
+    #     # sls_endpoints=sls_endpoints if sls_endpoints else "cn-heyuan=default-cms-1102382765107602-cn-heyuan",
+    #     # cms_endpoints=cms_endpoints if cms_endpoints else "cn-heyuan=default-cms-1102382765107602-cn-heyuan",
+    #     sls_endpoints=sls_endpoints,
+    #     cms_endpoints=cms_endpoints,
+    # )
     mcp_result_text = await run_mcp_agent(
-        query=mcp_query,
-        connection_mode="stdio",
-        url_or_cmd=python_executable,
-        access_key_id=access_key_id,
-        access_key_secret=access_key_secret,
-        # sls_endpoints=sls_endpoints if sls_endpoints else "cn-heyuan=default-cms-1102382765107602-cn-heyuan",
-        # cms_endpoints=cms_endpoints if cms_endpoints else "cn-heyuan=default-cms-1102382765107602-cn-heyuan",
-        sls_endpoints=sls_endpoints,
-        cms_endpoints=cms_endpoints
+        system_prompt=system_prompt,
+        project_details=project_details,
+        user_prompt=user_message,
+        connection_mode="sse",
+        url="http://127.0.0.1:8000/sse",
     )
 
     mcp_result = parse_rca_json_output(mcp_result_text)
@@ -128,7 +150,9 @@ async def run_mcp_only(
 
 
 ## Local RCA Agent Execution
-def run_rca_only(start_time, end_time, uuid=None, instance_type=None, ground_truth=None):
+def run_rca_only(
+    start_time, end_time, uuid=None, instance_type=None, ground_truth=None
+):
     system_prompt = build_system_prompt(start_time, end_time)
     user_message = build_user_message(start_time, end_time)
     rca_result = run_rca_agent(start_time, end_time, system_prompt, user_message)
