@@ -111,7 +111,7 @@ async def convert_mcp_tools_to_langchain(session: ClientSession) -> List[Structu
 
     return langchain_tools
 
-async def run_agent_logic(session: ClientSession, query: str):
+async def run_mcp_agent_logic(session: ClientSession, query: str):
     """The common agent logic once session is established."""
     # Initialize
     await session.initialize()
@@ -127,7 +127,7 @@ async def run_agent_logic(session: ClientSession, query: str):
     llm = get_llm()
     agent_executor = create_react_agent(llm, tools)
 
-    print(f"\n--- Starting Root Cause Analysis Task ---\nQuery: {query}\n")
+    # print(f"\n--- Starting Root Cause Analysis Task ---\nQuery: {query}\n")
 
     # Execute
     events = agent_executor.astream(
@@ -145,7 +145,7 @@ async def run_agent_logic(session: ClientSession, query: str):
                 
     return final_response
 
-async def run_agent(query: str, 
+async def run_mcp_agent(query: str, 
                    connection_mode: Literal["sse", "stdio"] = "stdio", 
                    url_or_cmd: str = "python",
                    access_key_id: Optional[str] = None,
@@ -169,7 +169,7 @@ async def run_agent(query: str,
         print(f"Connecting to MCP Server via SSE at {url_or_cmd}...")
         async with sse_client(url_or_cmd) as (read_stream, write_stream):
             async with ClientSession(read_stream, write_stream) as session:
-                return await run_agent_logic(session, query)
+                return await run_mcp_agent_logic(session, query)
                 
     elif connection_mode == "stdio":
         cmd_args = ["-m", "mcp_server_aliyun_observability", "--transport", "stdio"]
@@ -196,7 +196,7 @@ async def run_agent(query: str,
         
         async with stdio_client(server_params) as (read_stream, write_stream):
             async with ClientSession(read_stream, write_stream) as session:
-                return await run_agent_logic(session, query)
+                return await run_mcp_agent_logic(session, query)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run RCA Agent with MCP Tools")
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     try:
-        asyncio.run(run_agent(args.query, args.mode, args.target))
+        asyncio.run(run_mcp_agent(args.query, args.mode, args.target))
     except KeyboardInterrupt:
         print("\nOperation cancelled.")
     except Exception as e:

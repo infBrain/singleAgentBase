@@ -12,7 +12,7 @@ from tqdm import tqdm
 # Add src to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.agent.mcp_rca_agent import run_agent as run_mcp_agent
+from src.agent.mcp_rca_agent import run_mcp_agent
 from src.agent.rca_agent import run_rca_agent
 from src.tools.rca_output import parse_rca_json_output
 from src.tools.utils import _convert_to_beijing
@@ -85,7 +85,7 @@ async def run_mcp_only(
     start_time,
     end_time,
     sls_endpoints="cn-heyuan=cn-heyuan.log.aliyuncs.com",
-    cms_endpoints="cn-heyuan=metrics.cn-heyuan.aliyuncs.com",
+    cms_endpoints="cn-heyuan=cms.cn-heyuan.aliyuncs.com",
     ground_truth=None,
     uuid=None,
     delay=0,
@@ -234,7 +234,7 @@ if __name__ == "__main__":
     try:
         with open(os.path.join("data", "label_test.json"), "r", encoding="utf-8") as f:
             labels = json.load(f)
-            # labels = labels[:1]  # For testing, process only the first case
+            labels = labels[:1]  # For testing, process only the first case
 
         for case in tqdm(labels, desc="Processing Cases", total=len(labels)):
             start_time = case["start_time"]
