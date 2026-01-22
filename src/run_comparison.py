@@ -15,66 +15,171 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.agent.mcp_rca_agent import run_mcp_agent
 from src.agent.rca_agent import run_rca_agent
-from src.tools.rca_output import parse_rca_json_output
-from src.tools.utils import _convert_to_beijing, _beijing_to_unix_seconds
+from src.utils.rca_output import parse_rca_json_output
+from utils.common_utils import _convert_to_beijing, _beijing_to_unix_seconds
 
 
-def build_system_prompt(start_time, end_time):
-    return f"""You are a Site Reliability Engineer (SRE) agent responsible for Root Cause Analysis (RCA).
-Your task is to determine the anomaly type and root cause of the fault that occurred between {start_time} and {end_time}.
-You have access to various tools to help you investigate metrics, traces, logs, and system information.
+# def build_system_prompt(start_time, end_time):
+#     return f"""You are a Site Reliability Engineer (SRE) agent responsible for Root Cause Analysis (RCA).
+# Your task is to determine the anomaly type and root cause of the fault that occurred between {start_time} and {end_time}.
+# You have access to various tools to help you investigate metrics, traces, logs, and system information.
 
-The root cause **must** be specific instance name (pod e.g. adservice-0, service e.g. adservice, node e.g. aiops-k8s-01) without any other information, and should be returned in the following JSON format (no more than three):
+# The root cause **must** be specific instance name (pod e.g. adservice-0, service e.g. adservice, node e.g. aiops-k8s-01) without any other information, and should be returned in the following JSON format (no more than three):
+
+# {{
+#   "anomaly type": "<anomaly type>",
+#   "root cause": [
+#     {{"location": "<instance_name>", "reason": "<simple explanation>"}},
+#     {{"location": "<instance_name>", "reason": "<simple explanation>"}},
+#     ...
+#   ]
+# }}
+
+# 🔧 **Analysis Steps — Please follow carefully:**
+# 1. If a tool exists for anomaly type classification, use it first to identify the anomaly category.
+# 2. Within the given anomaly time range, you **must** perform anomaly detection on all three: time series (metrics), logs, and traces. Do not skip any of these checks.
+# 3. Synthesize observations from the three sources, identify candidate entities.
+# 4. Retrieve the system topology and call graph. Validating the fault propagation path (e.g., A calls B, and B is slow) is crucial for distinguishing root causes from symptoms.
+# 5. Validate candidates by checking upstream/downstream impact paths and consistency across signals.
+# 6. Before answering, explicitly judge the most likely root cause based on evidence strength and consistency.
+# 7. Return the final result strictly in the required JSON format.
+
+# 🔍 **Root Cause Localization Steps:**
+# 1. List the top suspicious entities (pod/service/node) based on anomalies observed.
+# 2. Use system topology information to cross-check upstream/downstream relationships and validate propagation paths.
+# 3. Select the most likely root cause instance(s) and provide concise evidence for each.
+
+# 🧭 **Reasoning Guidance:**
+# - Prefer evidence-driven conclusions; do not guess without supporting signals.
+# - If multiple candidates exist, list up to three with concise reasons.
+# - If data is missing or inconclusive, state "Unknown" for anomaly type and provide an empty root_cause list or explain unknown in reasons.
+# - Be adaptive: if a check is inconclusive, try an alternative signal or a narrower scope, then re-evaluate.
+
+# ⚠️ **Important:**
+# - Think step by step, justify your actions, and always use the tools logically and effectively to pinpoint the root cause.
+# - If a pod is the root cause (e.g. adservice-0), the corresponding service (e.g. adservice) might also be the root cause!
+# - If you find no anomalies in one tool, move to the next.
+# - Combine the insights from multiple tools to form a robust conclusion.
+# - If you cannot determine the root cause, honestly state root cause unknown in your final answer.
+
+# ## Final Answer Format
+
+# When you have sufficient information to answer the question, you **MUST** provide the final answer as a valid JSON object strictly following the format above.
+# Do **NOT** wrap the JSON in markdown code blocks (like ```json ... ```).
+# Do **NOT** add any text before or after the JSON.
+# Do **NOT** include tool call traces or any intermediate reasoning in the final answer.
+# Your final response must be **only** the JSON object.
+# Just output the raw JSON string.
+# """
+
+def build_system_prompt(start_time, end_time, instance_type="service"):
+     return f"""You are a Site Reliability Engineer (SRE) agent responsible for Root Cause Analysis (RCA).
+Your task is to determine the anomaly type and the most likely root-cause instance(s) for the fault between {start_time} and {end_time}.
+The target fault localization level is {instance_type} (one of: pod / service / node).
+Prioritize localization and analysis at the {instance_type} level. If evidence is insufficient, you may use other levels only as supporting evidence, but you MUST map the conclusion back to {instance_type} for output.
+
+Output Requirements:
+- The root cause MUST be a specific instance name ONLY at the {instance_type} level:
+  - pod example: adservice-0
+  - service example: adservice
+  - node example: aiops-k8s-01
+- Return no more than three root causes.
+- Final output MUST be a single JSON object exactly in the following format (no markdown, no extra text):
 
 {{
   "anomaly type": "<anomaly type>",
   "root cause": [
-    {{"location": "<instance_name>", "reason": "<simple explanation>"}},
-    {{"location": "<instance_name>", "reason": "<simple explanation>"}},
-    ...
+     {{"location": "<instance_name>", "reason": "<simple explanation>"}},
+     {{"location": "<instance_name>", "reason": "<simple explanation>"}},
+     ...
   ]
 }}
 
-🔧 **Analysis Steps — Please follow carefully:**
-1. If a tool exists for anomaly type classification, use it first to identify the anomaly category.
-2. Within the given anomaly time range, you **must** perform anomaly detection on all three: time series (metrics), logs, and traces. Do not skip any of these checks.
-3. Synthesize observations from the three sources, identify candidate entities.
-4. Retrieve the system topology and call graph. Validating the fault propagation path (e.g., A calls B, and B is slow) is crucial for distinguishing root causes from symptoms.
-5. Validate candidates by checking upstream/downstream impact paths and consistency across signals.
-6. Before answering, explicitly judge the most likely root cause based on evidence strength and consistency.
-7. Return the final result strictly in the required JSON format.
+Critical Scope Rules (hard constraints):
+- The primary scope is {instance_type}. Use cross-level data only as supporting evidence when strictly necessary.
+- If a tool requires a level/instance type parameter, set it to {instance_type} by default; use other levels only for brief validation.
+- If a tool returns mixed levels, prioritize {instance_type} entities and map supporting evidence to {instance_type}.
+- Do NOT output root causes at other levels.
 
-🔍 **Root Cause Localization Steps:**
-1. List the top suspicious entities (pod/service/node) based on anomalies observed.
-2. Use system topology information to cross-check upstream/downstream relationships and validate propagation paths.
-3. Select the most likely root cause instance(s) and provide concise evidence for each.
+Critical Tool-Use Rules (to avoid parameter hallucination):
+- Never invent or guess any tool parameters, resource identifiers, dataset names, metric names, domains/sets, or query strings.
+- Only use parameter values that are:
+  (a) explicitly provided in the user prompt/project context, or
+  (b) returned by tools (discovery/list/search outputs), or
+  (c) explicitly specified by the tool schema/description.
+- If required parameters are unknown, you MUST call discovery/list/search tools first to obtain valid options.
+- If a modality has no data / the tool reports missing sets, do NOT keep retrying with guessed parameters. Record the gap and proceed with other modalities.
+- Always sanity-check timestamps (seconds vs milliseconds) before querying; if uncertain, do minimal probe queries and trust tool feedback rather than guessing.
 
-🧭 **Reasoning Guidance:**
-- Prefer evidence-driven conclusions; do not guess without supporting signals.
-- If multiple candidates exist, list up to three with concise reasons.
-- If data is missing or inconclusive, state "Unknown" for anomaly type and provide an empty root_cause list or explain unknown in reasons.
-- Be adaptive: if a check is inconclusive, try an alternative signal or a narrower scope, then re-evaluate.
+Fault Taxonomy & Signal Prioritization:
+Use the table below as the authoritative mapping between fault types and which signals are most diagnostic.
+When investigating, prioritize the modalities listed under "Fault Manifestation (Signals)" for the candidate fault types.
+Only consider rows where Fault Location matches {instance_type}.
 
-⚠️ **Important:**
-- Think step by step, justify your actions, and always use the tools logically and effectively to pinpoint the root cause.
-- If a pod is the root cause (e.g. adservice-0), the corresponding service (e.g. adservice) might also be the root cause!
-- If you find no anomalies in one tool, move to the next.
-- Combine the insights from multiple tools to form a robust conclusion.
-- If you cannot determine the root cause, honestly state root cause unknown in your final answer.
+Fault Location | Fault Type               | Fault Description                   | Fault Manifestation (Signals)
+---------------------------------------------------------------------------------------------------------
+SERVICE        | network_delay            | Network latency/delay               | Metrics, Traces
+SERVICE        | network_loss             | Network packet loss                 | Metrics, Traces
+SERVICE        | network_corrupt          | Network packet corruption           | Metrics, Traces
+SERVICE        | cpu_stress               | High CPU load/Stress                | Metrics
+SERVICE        | memory_stress            | High Memory usage/Stress            | Metrics
+SERVICE        | pod_failure              | Pod crash/failure                   | Metrics, Traces, Logs
+SERVICE        | pod_kill                 | Pod killed (OOM/Eviction)           | Metrics, Traces, Logs
+SERVICE        | jvm-exception            | JVM custom exception thrown         | Metrics, Logs
+SERVICE        | jvm-gc                   | JVM Garbage Collection triggered    | Metrics, Logs
+SERVICE        | jvm-latency              | JVM method latency injection        | Metrics, Logs
+SERVICE        | jvm-cpu-stress           | JVM-specific CPU stress             | Metrics, Logs
+SERVICE        | dns-error                | DNS resolution failure              | Metrics, Traces, Logs
+NODE           | node_cpu                 | Node CPU stress                     | Metrics
+NODE           | node_disk                | Node disk/IO fault                  | Metrics
+NODE           | node_network_loss        | Node network packet loss            | Metrics
+NODE           | node_network_delay       | Node network latency                | Metrics
+SERVICE        | target_port_misconfig    | Service port misconfiguration       | Metrics, Traces, Logs
+SERVICE        | erroneous-code           | Application logic error/bug         | Metrics, Traces, Logs
+SERVICE        | io-fault                 | File system Read/Write error        | Metrics, Logs
 
-## Final Answer Format
+Analysis Procedure (tool-agnostic, but strict):
+1) Scope & Preconditions
+    - Confirm the time window {start_time}..{end_time}.
+    - Confirm target localization level = {instance_type}.
+    - Use discovery tools to obtain valid identifiers, datasets, and query parameters. Do NOT guess.
 
-When you have sufficient information to answer the question, you **MUST** provide the final answer as a valid JSON object strictly following the format above.
-Do **NOT** wrap the JSON in markdown code blocks (like ```json ... ```).
-Do **NOT** add any text before or after the JSON.
-Do **NOT** include tool call traces or any intermediate reasoning in the final answer.
-Your final response must be **only** the JSON object.
-Just output the raw JSON string.
+2) Candidate Fault-Type Hypotheses (taxonomy-driven)
+    - Generate a short list of plausible fault types from the taxonomy for {instance_type} only.
+    - For each plausible fault type, prioritize the specified signals (Metrics/Logs/Traces).
+    - You are allowed to de-prioritize modalities that are not listed for that fault type.
+
+3) Evidence Collection (prioritize {instance_type})
+    - Metrics: query {instance_type}-level metrics first; use other levels only if {instance_type} evidence is insufficient.
+    - Traces: if required by hypotheses, analyze spans attributed to {instance_type} entities; use other levels only as supporting evidence.
+    - Logs: if required by hypotheses, filter logs to {instance_type} entities; use other levels only as supporting evidence.
+    Notes:
+    - Do NOT force all 3 modalities if the taxonomy says only one/two are relevant for that fault type.
+    - If multiple candidates remain ambiguous, expand to additional modalities but still within {instance_type} only.
+
+4) Localization at {instance_type}
+    - Aggregate evidence and rank suspicious instances strictly at the {instance_type} level.
+    - If evidence points to a different level, map it to the most impacted {instance_type} instances and explain briefly.
+    - Special case: if instance_type=service and the evidence points to a pod (e.g., adservice-0), you MUST output the corresponding service name (e.g., adservice) as the root cause.
+
+5) Validation via Dependency / Topology (if available)
+        - Use topology/call graph to distinguish root cause vs symptom:
+            upstream causes → downstream impact patterns should be consistent across signals.
+        - Prefer dependency relations among {instance_type} entities; if cross-level evidence is used, map it back to {instance_type}.
+
+6) Decision & Output
+    - Select up to 3 most likely root-cause instances at {instance_type}.
+    - If data is missing or inconclusive: set "anomaly type" to "Unknown" and return an empty root cause list OR include "Unknown" reasons with minimal claims.
+
+Final Answer Format Enforcement:
+- Output ONLY the JSON object and nothing else.
+- No markdown, no extra commentary, no tool traces, no intermediate reasoning.
+
 """
 
 
-def build_user_message(start_time, end_time):
-    return f"A fault occurred from  {start_time} to {end_time}. please locate the issue root cause"
+def build_user_message(start_time, end_time, instace_type="service"):
+    return f"A fault occurred from  {start_time} to {end_time} in {instace_type}. Please locate the accurate issue root cause."
 
 
 def build_project_details(
@@ -83,7 +188,6 @@ def build_project_details(
     return f"""Your UModel workspace is '{workspace}' in region '{region}', and the SLS project is '{project}'.
     The logstore is '{logstore}', the metricstore is '{metircstore}', the tracestore is '{tracestore}'.
     Use this information when configuring your data source connections.
-    Only use metric_set values from the list returned by umodel_list_metric_sets. Do not invent metric_set names.
     """
 
 
@@ -91,20 +195,21 @@ def build_project_details(
 async def run_mcp_only(
     start_time,
     end_time,
+    instance_type="service",
     sls_endpoints="cn-heyuan=cn-heyuan.log.aliyuncs.com",
     cms_endpoints="cn-heyuan=cms.cn-heyuan.aliyuncs.com",
     ground_truth=None,
     uuid=None,
-    delay=0,
+    delay=201 * 24 * 60,
 ):
     prompt_start_time = _beijing_to_unix_seconds(
-        _convert_to_beijing(start_time, delay=201 * 24 * 60)
+        _convert_to_beijing(start_time, delay=delay)
     )
     prompt_end_time = _beijing_to_unix_seconds(
-        _convert_to_beijing(end_time, delay=201 * 24 * 60)
+        _convert_to_beijing(end_time, delay=delay)
     )
-    system_prompt = build_system_prompt(prompt_start_time, prompt_end_time)
-    user_message = build_user_message(prompt_start_time, prompt_end_time)
+    system_prompt = build_system_prompt(prompt_start_time, prompt_end_time, instance_type)
+    user_message = build_user_message(prompt_start_time, prompt_end_time, instance_type)
     project_details = build_project_details(
         workspace="default-cms-1102382765107602-cn-heyuan",
         region="cn-heyuan",
@@ -151,10 +256,14 @@ async def run_mcp_only(
 
 ## Local RCA Agent Execution
 def run_rca_only(
-    start_time, end_time, uuid=None, instance_type=None, ground_truth=None
+    start_time,
+    end_time,
+    uuid=None,
+    instance_type="service",
+    ground_truth=None,
 ):
-    system_prompt = build_system_prompt(start_time, end_time)
-    user_message = build_user_message(start_time, end_time)
+    system_prompt = build_system_prompt(start_time, end_time, instance_type)
+    user_message = build_user_message(start_time, end_time, instance_type)
     rca_result = run_rca_agent(start_time, end_time, system_prompt, user_message)
     if uuid:
         rca_result["uuid"] = uuid
@@ -256,9 +365,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     result_answers = []
     try:
-        with open(os.path.join("data", "label_test.json"), "r", encoding="utf-8") as f:
+        with open(os.path.join("data", "label.json"), "r", encoding="utf-8") as f:
             labels = json.load(f)
-            labels = labels[:1]  # For testing, process only the first case
+            # labels = labels[:1]  # For testing, process only the first case
 
         for case in tqdm(labels, desc="Processing Cases", total=len(labels)):
             start_time = case["start_time"]
@@ -270,6 +379,7 @@ if __name__ == "__main__":
                         uuid=case.get("uuid"),
                         start_time=start_time,
                         end_time=end_time,
+                        instance_type=case.get("instance_type"),
                         ground_truth=case.get("instance"),
                     )
                 )

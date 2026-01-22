@@ -17,7 +17,7 @@ import re
 import json
 
 
-from tools.utils import (
+from utils.common_utils import (
     ML_METRICS,
     _get_date_range,
     _get_instance_type,
@@ -30,7 +30,7 @@ from tools.utils import (
     _detect_anomalies_threshold,
     _generate_anomaly_description,
 )
-from tools.utils import (
+from utils.common_utils import (
     apm_metric_names,
     infra_node_metric_names,
     infra_pod_metric_names,
@@ -38,8 +38,8 @@ from tools.utils import (
     tidb_pd_metric_names,
     tidb_tikv_metric_names,
 )
-from tools.llm_chat import chat
-from tools.fcvae_model import FCVAE
+from utils.llm_chat import chat
+from utils.fcvae_model import FCVAE
 import matplotlib.pyplot as plt
 import torch
 
