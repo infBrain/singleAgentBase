@@ -3,7 +3,6 @@ import sys
 import json
 import datetime
 from langchain_openai import ChatOpenAI, AzureChatOpenAI
-from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
 
 # from langchain.agents import Tool # We will use @tool decorator instead
@@ -11,12 +10,12 @@ from langgraph.prebuilt import create_react_agent
 # Add src to sys.path to allow importing tools
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.multimodal_data import (
-    time_series_anomaly_detection,
-    trace_anomaly_detection,
-    log_anomaly_detection,
-    query_system_information,
-    classifier,
+from tools.traditional_tools import (
+    analyze_fault_type,
+    search_metrics,
+    search_traces,
+    search_logs,
+    get_system_info,
 )
 
 # Setup LLM based on environment variables (similar to tools/llm_chat.py)
@@ -62,83 +61,6 @@ def get_llm():
         )
 
 
-# Define Tools
-@tool
-def search_metrics(start_time: str, end_time: str, metric_name: str = "all", instance: str = "all") -> str:
-    """
-    Search and analyze metric anomalies.
-    
-    Args:
-        start_time: Start time in format like 2025-06-05T23:24:13Z
-        end_time: End time in format like 2025-06-05T23:24:13Z
-        metric_name: Name of the metric to check. Defaults to 'all'.
-        instance: Name of the instance (service/pod/node) to check. Defaults to 'all'.
-    """
-    try:
-        return time_series_anomaly_detection(
-            start_time, end_time, metric_name, instance
-        )
-    except Exception as e:
-        return f"Error executing time_series_anomaly_detection: {str(e)}"
-
-
-@tool
-def search_traces(start_time: str, end_time: str) -> str:
-    """
-    Detect anomalies in traces.
-    
-    Args:
-        start_time: Start time in format like 2025-06-05T23:24:13Z
-        end_time: End time in format like 2025-06-05T23:24:13Z
-    """
-    try:
-        return trace_anomaly_detection(start_time, end_time)
-    except Exception as e:
-        return f"Error executing trace_anomaly_detection: {str(e)}"
-
-
-@tool
-def search_logs(start_time: str, end_time: str) -> str:
-    """
-    Detect anomalies in logs.
-    
-    Args:
-        start_time: Start time in format like 2025-06-05T23:24:13Z
-        end_time: End time in format like 2025-06-05T23:24:13Z
-    """
-    try:
-        return log_anomaly_detection(start_time, end_time)
-    except Exception as e:
-        return f"Error executing log_anomaly_detection: {str(e)}"
-
-
-@tool
-def get_system_info() -> str:
-    """
-    Retrieve system topology and configuration information.
-    Use this tool to understand the static architecture of the system, including:
-    - Service call relationships and dependencies (Call Graph).
-    - Deployment information (which services run on which nodes).
-    - Configuration details of components (e.g., database versions, resource limits).
-    Input is a natural language question about the system structure or topology.
-    """
-    return query_system_information()
-
-
-@tool
-def analyze_fault_type(start_time: str, end_time: str) -> str:
-    """
-    Analyze anomaly detection results to determine the main fault type.
-    This tool uses a classifier to identify the likely failure category (e.g., Pod Memory, Network Delay) based on metric patterns.
-    
-    Args:
-        start_time: Start time in format like 2025-06-05T23:24:13Z
-        end_time: End time in format like 2025-06-05T23:24:13Z
-    """
-    try:
-        return classifier(start_time, end_time)
-    except Exception as e:
-        return f"Error executing classifier: {str(e)}"
 
 
 tools = [

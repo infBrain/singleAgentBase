@@ -42,6 +42,11 @@ async def run_mcp_agent_logic(
     # Get tools
     tools = await load_mcp_tools(session)
 
+
+    with open('tools_list.txt', 'w') as f:
+        for tool in tools:
+            f.write(f"{tool}\n")
+
     # Create and run the agent
     agent = create_react_agent(llm, tools)
 
@@ -161,27 +166,27 @@ async def run_mcp_agent(
         raise
 
 
-# # Example usage
-# asyncio.run(
-#     run_mcp_agent(
-#         system_prompt="",
-# #         system_prompt="""
-# # 你是SRE专家，使用阿里云可观测 2.0 (UModel) MCP 工具做故障定位。
+# Example usage
+asyncio.run(
+    run_mcp_agent(
+        system_prompt="",
+#         system_prompt="""
+# 你是SRE专家，使用阿里云可观测 2.0 (UModel) MCP 工具做故障定位。
 
-# # 输入会给你 instance_type ∈ {pod,node,service}，它只表示分析入口对象类型。
-# # 严禁猜测任何集合名/域名/指标名：包括 metric_domain_name、metric、log_set_name、event_set_name、trace_set_name 等。
+# 输入会给你 instance_type ∈ {pod,node,service}，它只表示分析入口对象类型。
+# 严禁猜测任何集合名/域名/指标名：包括 metric_domain_name、metric、log_set_name、event_set_name、trace_set_name 等。
 
-# # 必须遵循流程：
-# # 1) list_domains(workspace, regionId)
-# # 2) umodel_search_entity_set(workspace, search_text=与instance_type相关关键词, regionId) 选择最匹配的 domain + entity_set_name
-# # 3) umodel_list_data_set(workspace, domain, entity_set_name, regionId) 获取可用数据集合与参数选项
-# # 4) 再调用 umodel_search_entities / umodel_get_entities 定位目标实体（若缺少实体标识则先给出可选实体列表并停止继续查询）
-# # 5) 按需查询：优先 umodel_get_golden_metrics，其次 umodel_get_metrics(analysis_mode="anomaly_detection")，再结合 umodel_get_logs / umodel_get_events / umodel_search_traces 等
-# # 6) 最终仅输出严格 JSON：{ "instance_type": "...", "root_cause": "...", "evidence": [...], "next_actions": [...] }
+# 必须遵循流程：
+# 1) list_domains(workspace, regionId)
+# 2) umodel_search_entity_set(workspace, search_text=与instance_type相关关键词, regionId) 选择最匹配的 domain + entity_set_name
+# 3) umodel_list_data_set(workspace, domain, entity_set_name, regionId) 获取可用数据集合与参数选项
+# 4) 再调用 umodel_search_entities / umodel_get_entities 定位目标实体（若缺少实体标识则先给出可选实体列表并停止继续查询）
+# 5) 按需查询：优先 umodel_get_golden_metrics，其次 umodel_get_metrics(analysis_mode="anomaly_detection")，再结合 umodel_get_logs / umodel_get_events / umodel_search_traces 等
+# 6) 最终仅输出严格 JSON：{ "instance_type": "...", "root_cause": "...", "evidence": [...], "next_actions": [...] }
 
-# # 当某类数据集不存在（例如 event_sets 为空），不要硬查该工具，直接跳过并在 evidence 说明缺失原因。""",
-#         project_details="Your workspace is 'default-cms-1102382765107602-cn-heyuan' in region 'cn-heyuan', and the SLS project is 'default-cms-1102382765107602-cn-heyuan', logstore is **aiops-dataset-logs**. Use this information when configuring your data source connections.",
-#         # project_details="",
-#         user_prompt="时间范围start_time = 1766506202,end_time = 1766507462在service上发生了异常，对emailservice进行metric异常检测，分析是否service的指标出现了异常。返回json格式，包括异常指标名称和异常service的具体名称",
-#     )
-# )
+# 当某类数据集不存在（例如 event_sets 为空），不要硬查该工具，直接跳过并在 evidence 说明缺失原因。""",
+        project_details="Your workspace is 'default-cms-1102382765107602-cn-heyuan' in region 'cn-heyuan', and the SLS project is 'default-cms-1102382765107602-cn-heyuan', logstore is **aiops-dataset-logs**. Use this information when configuring your data source connections.",
+        # project_details="",
+        user_prompt="时间范围start_time = 1766506202,end_time = 1766507462在service上发生了异常，对emailservice进行metric异常检测，分析是否service的指标出现了异常。返回json格式，包括异常指标名称和异常service的具体名称",
+    )
+)
