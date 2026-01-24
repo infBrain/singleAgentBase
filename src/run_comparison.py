@@ -13,7 +13,7 @@ from tqdm import tqdm
 # Add src to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.agent.mcp_rca_agent import run_mcp_agent
+from src.agent.mcp_agent_call import run_mcp_agent
 from src.agent.rca_agent import run_rca_agent
 from src.utils.rca_output import parse_rca_json_output
 from utils.common_utils import _convert_to_beijing, _beijing_to_unix_seconds
@@ -97,6 +97,7 @@ Output Requirements:
 
 Critical Scope Rules (hard constraints):
 - The primary scope is {instance_type}. Use cross-level data only as supporting evidence when strictly necessary.
+- If {instance_type} is service, also check pod-level anomalies that match service-0/service-1 naming patterns and map evidence back to the service.
 - If a tool requires a level/instance type parameter, set it to {instance_type} by default; use other levels only for brief validation.
 - If a tool returns mixed levels, prioritize {instance_type} entities and map supporting evidence to {instance_type}.
 - Do NOT output root causes at other levels.
@@ -110,6 +111,48 @@ Critical Tool-Use Rules (to avoid parameter hallucination):
 - If required parameters are unknown, you MUST call discovery/list/search tools first to obtain valid options.
 - If a modality has no data / the tool reports missing sets, do NOT keep retrying with guessed parameters. Record the gap and proceed with other modalities.
 - Always sanity-check timestamps (seconds vs milliseconds) before querying; if uncertain, do minimal probe queries and trust tool feedback rather than guessing.
+
+Analysis Procedure (tool-agnostic, but strict):
+1) Scope & Preconditions
+    - Confirm the time window {start_time}..{end_time}.
+    - Confirm target localization level = {instance_type}.
+    - Use discovery tools to obtain valid identifiers, datasets, and query parameters. Do NOT guess.
+
+2) Candidate Fault-Type Hypotheses (taxonomy-driven)
+    - Generate a short list of plausible fault types from the taxonomy for {instance_type} only.
+    - For each plausible fault type, prioritize the specified signals (Metrics/Logs/Traces).
+    - You are allowed to de-prioritize modalities that are not listed for that fault type.
+
+3) Evidence Collection (prioritize {instance_type})
+    - Metrics: query {instance_type}-level metrics first; use other levels only if {instance_type} evidence is insufficient.
+    - Traces: if required by hypotheses, analyze spans attributed to {instance_type} entities; use other levels only as supporting evidence.
+    - Logs: if required by hypotheses, filter logs to {instance_type} entities; use other levels only as supporting evidence.
+    - If {instance_type}=service, also check pod anomalies with service-0/service-1 naming patterns and map evidence back to the service.
+    Notes:
+    - Do NOT force all 3 modalities if the taxonomy says only one/two are relevant for that fault type.
+    - If multiple candidates remain ambiguous, expand to additional modalities but still within {instance_type} only.
+
+4) Localization at {instance_type}
+    - Aggregate evidence and rank suspicious instances strictly at the {instance_type} level.
+    - If evidence points to a different level, map it to the most impacted {instance_type} instances and explain briefly.
+    - Special case: if instance_type=service and the evidence points to a pod (e.g., adservice-0), you MUST output the corresponding service name (e.g., adservice) as the root cause.
+
+5) Validation via Dependency / Topology (if available)
+        - Use topology/call graph to distinguish root cause vs symptom:
+            upstream causes → downstream impact patterns should be consistent across signals.
+        - Prefer dependency relations among {instance_type} entities; if cross-level evidence is used, map it back to {instance_type}.
+
+6) Decision & Output
+    - Select up to 3 most likely root-cause instances at {instance_type}.
+    - If data is missing or inconclusive: set "anomaly type" to "Unknown" and return an empty root cause list OR include "Unknown" reasons with minimal claims.
+
+Final Answer Format Enforcement:
+- Output ONLY the JSON object and nothing else.
+- No markdown, no extra commentary, no tool traces, no intermediate reasoning.
+- If you are about to output anything else, STOP and output ONLY the JSON object.
+- The response must start with "{" and end with "}" with no surrounding text.
+- Do NOT output any explanation outside JSON.
+
 
 Fault Taxonomy & Signal Prioritization:
 Use the table below as the authoritative mapping between fault types and which signals are most diagnostic.
@@ -138,43 +181,6 @@ SERVICE        | target_port_misconfig    | Service port misconfiguration       
 SERVICE        | erroneous-code           | Application logic error/bug         | Metrics, Traces, Logs
 SERVICE        | io-fault                 | File system Read/Write error        | Metrics, Logs
 
-Analysis Procedure (tool-agnostic, but strict):
-1) Scope & Preconditions
-    - Confirm the time window {start_time}..{end_time}.
-    - Confirm target localization level = {instance_type}.
-    - Use discovery tools to obtain valid identifiers, datasets, and query parameters. Do NOT guess.
-
-2) Candidate Fault-Type Hypotheses (taxonomy-driven)
-    - Generate a short list of plausible fault types from the taxonomy for {instance_type} only.
-    - For each plausible fault type, prioritize the specified signals (Metrics/Logs/Traces).
-    - You are allowed to de-prioritize modalities that are not listed for that fault type.
-
-3) Evidence Collection (prioritize {instance_type})
-    - Metrics: query {instance_type}-level metrics first; use other levels only if {instance_type} evidence is insufficient.
-    - Traces: if required by hypotheses, analyze spans attributed to {instance_type} entities; use other levels only as supporting evidence.
-    - Logs: if required by hypotheses, filter logs to {instance_type} entities; use other levels only as supporting evidence.
-    Notes:
-    - Do NOT force all 3 modalities if the taxonomy says only one/two are relevant for that fault type.
-    - If multiple candidates remain ambiguous, expand to additional modalities but still within {instance_type} only.
-
-4) Localization at {instance_type}
-    - Aggregate evidence and rank suspicious instances strictly at the {instance_type} level.
-    - If evidence points to a different level, map it to the most impacted {instance_type} instances and explain briefly.
-    - Special case: if instance_type=service and the evidence points to a pod (e.g., adservice-0), you MUST output the corresponding service name (e.g., adservice) as the root cause.
-
-5) Validation via Dependency / Topology (if available)
-        - Use topology/call graph to distinguish root cause vs symptom:
-            upstream causes → downstream impact patterns should be consistent across signals.
-        - Prefer dependency relations among {instance_type} entities; if cross-level evidence is used, map it back to {instance_type}.
-
-6) Decision & Output
-    - Select up to 3 most likely root-cause instances at {instance_type}.
-    - If data is missing or inconclusive: set "anomaly type" to "Unknown" and return an empty root cause list OR include "Unknown" reasons with minimal claims.
-
-Final Answer Format Enforcement:
-- Output ONLY the JSON object and nothing else.
-- No markdown, no extra commentary, no tool traces, no intermediate reasoning.
-
 """
 
 
@@ -183,9 +189,9 @@ def build_user_message(start_time, end_time, instace_type="service"):
 
 
 def build_project_details(
-    workspace, region, project, logstore, metircstore, tracestore
+    workspace, region, sls_project, logstore, metircstore, tracestore
 ):
-    return f"""Your UModel workspace is '{workspace}' in region '{region}', and the SLS project is '{project}'.
+    return f"""Your UModel workspace is '{workspace}' in region '{region}', and the SLS project is '{sls_project}'.
     The logstore is '{logstore}', the metricstore is '{metircstore}', the tracestore is '{tracestore}'.
     Use this information when configuring your data source connections.
     """
@@ -197,7 +203,7 @@ async def run_mcp_only(
     end_time,
     instance_type="service",
     sls_endpoints="cn-heyuan=cn-heyuan.log.aliyuncs.com",
-    cms_endpoints="cn-heyuan=cms.cn-heyuan.aliyuncs.com",
+    cms_endpoints="cn-heyuan=metrics.cn-heyuan.aliyuncs.com",
     ground_truth=None,
     uuid=None,
     delay=201 * 24 * 60,
@@ -211,9 +217,9 @@ async def run_mcp_only(
     system_prompt = build_system_prompt(prompt_start_time, prompt_end_time, instance_type)
     user_message = build_user_message(prompt_start_time, prompt_end_time, instance_type)
     project_details = build_project_details(
-        workspace="default-cms-1102382765107602-cn-heyuan",
+        workspace="zy-aiops-challenges-2025",
         region="cn-heyuan",
-        project="default-cms-1102382765107602-cn-heyuan",
+        sls_project="default-cms-1102382765107602-cn-heyuan",
         logstore="aiops-dataset-logs",
         metircstore="aiops-dataset-metrics",
         tracestore="aiops-dataset-traces",
@@ -367,7 +373,7 @@ if __name__ == "__main__":
     try:
         with open(os.path.join("data", "label.json"), "r", encoding="utf-8") as f:
             labels = json.load(f)
-            # labels = labels[:1]  # For testing, process only the first case
+            labels = labels[:1]  # For testing, process only the first case
 
         for case in tqdm(labels, desc="Processing Cases", total=len(labels)):
             start_time = case["start_time"]

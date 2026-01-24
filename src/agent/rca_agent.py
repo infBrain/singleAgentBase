@@ -12,9 +12,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.traditional_tools import (
     analyze_fault_type,
-    search_metrics,
-    search_traces,
-    search_logs,
+    detect_metrics,
+    detect_traces,
+    detect_logs,
     get_system_info,
 )
 
@@ -65,9 +65,9 @@ def get_llm():
 
 tools = [
     analyze_fault_type,
-    search_metrics,
-    search_traces,
-    search_logs,
+    detect_metrics,
+    detect_traces,
+    detect_logs,
     get_system_info,
 ]
 
@@ -93,13 +93,13 @@ def run_rca_agent(start_time: str, end_time: str, system_prompt: str, user_promp
     # 1. **analyze_fault_type**:
     #    - Use this tool FIRST to get a high-level classification of the fault (e.g., "Pod CPU", "Network Delay").
     #    - This guides your subsequent investigation.
-    # 2. **search_metrics**:
+    # 2. **detect_metrics**:
     #    - Verify the classification and identify specific affected components.
     #    - You can start with broad metrics ('all') or drill down based on the classification.
-    # 3. **search_traces**:
+    # 3. **detect_traces**:
     #    - Use traces to identify latency issues or call chain errors.
     #    - This can specifically help pinpoint service-level issues.
-    # 4. **search_logs**:
+    # 4. **detect_logs**:
     #    - Check logs for the specific time period to find error messages or exceptions.
     # 5. **get_system_info**:
     #    - Use this to understand the system topology or unrelated configuration information if needed.

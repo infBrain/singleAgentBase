@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.multimodal_data import (
 	get_logs_offline,
+	get_metric_values_offline,
 	get_trace_values_offline,
 	time_series_anomaly_detection,
 	trace_anomaly_detection,
@@ -37,7 +38,7 @@ def _df_to_json_records(df: pd.DataFrame, limit: int) -> str:
 
 
 @tool
-def get_logs_timeseries(
+def get_logs(
 	start_time: Annotated[str, "Start time, e.g. 2025-06-05T23:24:13Z"],
 	end_time: Annotated[str, "End time, e.g. 2025-06-05T23:24:13Z"],
 	limit: Annotated[int, "Max records to return"] = 200,
@@ -56,7 +57,7 @@ def get_logs_timeseries(
 
 
 @tool
-def get_traces_timeseries(
+def get_traces(
 	start_time: Annotated[str, "Start time, e.g. 2025-06-05T23:24:13Z"],
 	end_time: Annotated[str, "End time, e.g. 2025-06-05T23:24:13Z"],
 	limit: Annotated[int, "Max records to return"] = 200,
@@ -75,7 +76,45 @@ def get_traces_timeseries(
 
 
 @tool
-def search_metrics(
+def get_metrics(
+	start_time: str,
+	end_time: str,
+	metric_name: str = "all",
+	instance: str = "all",
+) -> str:
+	"""
+	Get metric values from offline data.
+
+	Args:
+		start_time: Start time in format like 2025-06-05T23:24:13Z
+		end_time: End time in format like 2025-06-05T23:24:13Z
+		metric_name: Name of the metric to check. Defaults to 'all'.
+		instance: Name of the instance (service/pod/node) to check. Defaults to 'all'.
+	"""
+	try:
+		values = get_metric_values_offline(
+			start_time=start_time,
+			end_time=end_time,
+			metric_name=metric_name,
+			instance=instance,
+		)
+		if values is None or len(values) == 0:
+			return "No metric data found for the specified time period"
+		limited_values = values[:200].tolist()
+		return json.dumps(
+			{
+				"count": int(len(values)),
+				"limited_count": int(len(limited_values)),
+				"values": limited_values,
+			},
+			ensure_ascii=False,
+		)
+	except Exception as e:
+		return f"Error executing get_metric_values_offline: {str(e)}"
+
+
+@tool
+def detect_metrics(
 	start_time: str,
 	end_time: str,
 	metric_name: str = "all",
@@ -99,7 +138,7 @@ def search_metrics(
 
 
 @tool
-def search_traces(start_time: str, end_time: str) -> str:
+def detect_traces(start_time: str, end_time: str) -> str:
 	"""
 	Detect anomalies in traces.
 
@@ -114,7 +153,7 @@ def search_traces(start_time: str, end_time: str) -> str:
 
 
 @tool
-def search_logs(start_time: str, end_time: str) -> str:
+def detect_logs(start_time: str, end_time: str) -> str:
 	"""
 	Detect anomalies in logs.
 

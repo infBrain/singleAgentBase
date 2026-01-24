@@ -53,7 +53,7 @@ def get_llm() -> ChatOpenAI:
         base_url=os.environ.get("OPENAI_BASE_URL"),
         temperature=0,
         max_tokens=512,
-        max_retries=2,
+        max_retries=30,
         timeout=60,
     )
 
@@ -198,13 +198,14 @@ async def run_mcp_agent(
         raise
 
 
-if __name__ == "__main__":
-    asyncio.run(
-        run_mcp_agent(
-            system_prompt="你是一个sre运维专家，给出异常时间段后，请定位根因。如果是service异常，那么相关pod也会出现异常，且相关pod的名字为service-0、service-1这种格式。只需要返回json格式的结果即可，根因定位的粒度最终定位到指定粒度上。",
-            # project_details="区域为cn-heyuan",
-            # user_prompt="列出所有可用的工作空间",
-            project_details="Your workspace is 'default-cms-1102382765107602-cn-heyuan' in region 'cn-heyuan', and the SLS project is 'default-cms-1102382765107602-cn-heyuan', logstore is **aiops-dataset-logs**. Use this information when configuring your data source connections.",
-            user_prompt="时间范围start_time = 1766506202,end_time = 1766507462在service上发生了异常，分析具体是哪个service的指标出现了异常。返回json格式，包括异常指标名称和异常service的具体名称",
-        )
-    )
+# if __name__ == "__main__":
+#     asyncio.run(
+#         run_mcp_agent(
+#             system_prompt="你是一个sre运维专家，给出异常时间段后，请定位到异常根因。如果是service异常，那么相关pod也会出现异常，需要对相关pod进行查询分析，且相关pod的名字为service-0、service-1这种格式。只需要返回json格式的结果即可，根因定位的粒度最终定位到指定粒度上。",
+#             # project_details="区域为cn-heyuan",
+#             # user_prompt="列出所有可用的工作空间",
+#             project_details="Your workspace is 'zy-aiops-challenges-2025' in region 'cn-heyuan', and the SLS project is 'default-cms-1102382765107602-cn-heyuan', logstore is **aiops-dataset-logs**. Use this information when configuring your data source connections.",
+#             # user_prompt="时间范围start_time = 1766506202,end_time = 1766507462在service上发生了异常，分析具体是哪个service的指标出现了异常，并定位到故障根因。最终返回json格式，包括异常指标名称和异常service的具体名称 \n 如果无法定位到具体的service异常，就将全部的service和相关pod列出来，对其每个指标进行分析，必须得到具体的异常指标和并定位到根因异常service名称，如果全部查询后仍无法定位到具体的异常service，则返回无法定位。分析具体是哪个service的指标出现了异常，并定位到故障根因。最终返回json格式，包括异常指标名称和异常service的具体名称 \n 如果无法定位到具体的service异常，就将全部的service和相关pod列出来，对其每个指标进行分析，必须得到具体的异常指标和并定位到根因异常service名称，如果全部查询后仍无法定位到具体的异常service，则返回无法定位。",
+#             user_prompt="时间范围start_time = 1766506202,end_time = 1766507462在service上发生了异常，查出emailservice和相关pod的指标，返回有异常的数据，返回结果为json格式",
+#         )
+#     )
