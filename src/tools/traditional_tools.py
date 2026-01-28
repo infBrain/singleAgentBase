@@ -38,6 +38,25 @@ def _df_to_json_records(df: pd.DataFrame, limit: int) -> str:
 
 
 @tool
+def guide_intro() -> str:
+	"""Return guidance for traditional offline tool usage flow and norms.
+
+	Overview: Recommends an order for offline data queries, anomaly detection, and fault type analysis.
+	Use case: Get a unified workflow guide before starting offline RCA tasks.
+	Notes: Returns guidance text only and does not execute queries.
+	"""
+	return (
+		"Traditional Tool Usage Guide:\n"
+		"1) Confirm the time range (start_time/end_time) and keep it narrow.\n"
+		"2) For raw data, start with get_logs/get_metrics/get_traces.\n"
+		"3) For anomalies, then use detect_logs/detect_metrics/detect_traces.\n"
+		"4) For fault type inference, call analyze_fault_type.\n"
+		"5) Use get_system_info for topology/config before analysis.\n"
+		"6) If results are empty, adjust the time range or instance filters."
+	)
+
+
+@tool
 def get_logs(
 	start_time: Annotated[str, "Start time, e.g. 2025-06-05T23:24:13Z"],
 	end_time: Annotated[str, "End time, e.g. 2025-06-05T23:24:13Z"],

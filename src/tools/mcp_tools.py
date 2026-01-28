@@ -66,6 +66,25 @@ async def introduction() -> str:
 
 
 @tool
+async def guide_intro() -> str:
+    """Return guidance for MCP tool usage flow and norms.
+
+    Overview: Provides expectations, call order, parameter choices, and error handling tips.
+    Use case: Obtain a unified MCP workflow guide before executing tasks.
+    Notes: Returns guidance text only and does not call MCP APIs.
+    """
+    return (
+        "MCP Tool Usage Guide:\n"
+        "1) Identify regionId/workspace/time range first; call list_workspace if missing.\n"
+        "2) For entity info, start with umodel_search_entity_set/umodel_get_entities.\n"
+        "3) Before metrics/logs/events/traces, use umodel_list_data_set to confirm set names.\n"
+        "4) Query tools return text only; double-check field names and time windows if needed.\n"
+        "5) On empty results or errors, narrow the window and verify domain/entity_set_name.\n"
+        "6) Keep each call focused; avoid oversized queries and irrelevant parameters."
+    )
+
+
+@tool
 async def list_workspace(regionId: str) -> str:
     """列出可用的CMS工作空间。
 
