@@ -16,7 +16,7 @@ from tools.traditional_tools import (
     detect_traces,
     detect_logs,
     get_system_info,
-)
+) # RCA not need get_logs/metrics/traces, analyze + detect is enough (contain raw data query)
 
 # Setup LLM based on environment variables (similar to tools/llm_chat.py)
 BASE_URL = os.environ.get("OPENAI_BASE_URL", "")
@@ -119,7 +119,6 @@ def run_rca_agent(start_time: str, end_time: str, system_prompt: str, user_promp
     # Just output the raw JSON string.
     # """
 
-    print('=================\n',tools[:1])
     agent_executor = create_react_agent(llm, tools, prompt=system_prompt)
 
     try:

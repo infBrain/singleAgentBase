@@ -74,3 +74,6 @@ data/metric-parquet/
 data/trace-parquet/
 *.parquet
 *.log
+
+# Ignore eval_result
+eval_result/

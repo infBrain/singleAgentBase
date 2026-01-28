@@ -215,7 +215,7 @@ from utils.common_utils import _convert_to_beijing, _beijing_to_unix_seconds
 #   - 你必须获取所有 service 名称；
 #   - 同时也必须获取所有 pod 名称（仅用于辅助证据与映射），但最终输出仍必须是 service 名称。
 #   - 若证据指向 pod（如 adservice-0），输出时必须映射为对应的 service（如 adservice）。
-
+# 输出根因 instance_type 粒度。
 # 关键约束：能力/工具使用（防参数幻觉）
 # - 绝不发明/猜测任何能力参数、资源标识符、数据集名称、指标名称、字段名、domain/set、查询语句等。
 # - 只能使用以下来源的参数值：
@@ -503,6 +503,7 @@ async def run_mcp_only(
         mcp_result["uuid"] = uuid
     mcp_result["start_time"] = start_time
     mcp_result["end_time"] = end_time
+    mcp_result["instance_type"] = instance_type
     if ground_truth:
         mcp_result["ground_truth"] = ground_truth
     return mcp_result

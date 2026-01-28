@@ -11,13 +11,13 @@ _MCP_SESSION: Optional[ClientSession] = None
 
 
 def set_mcp_session(session: ClientSession) -> None:
-    """设置全局 MCP 会话，供 @tool 封装使用。"""
+    """Set global MCP session for @tool wrappers."""
     global _MCP_SESSION
     _MCP_SESSION = session
 
 
 def clear_mcp_session() -> None:
-    """清理全局 MCP 会话。"""
+    """Clear the global MCP session."""
     global _MCP_SESSION
     _MCP_SESSION = None
 
@@ -56,11 +56,11 @@ async def _call_tool(name: str, arguments: Dict[str, Any]) -> str:
 
 @tool
 async def introduction() -> str:
-    """获取阿里云可观测性MCP Server的介绍和使用说明。
+    """Get an introduction and usage guide for the Alibaba Cloud Observability MCP Server.
 
-    功能概述：返回阿里云可观测性 MCP Server 的服务概述、核心能力和使用限制说明。
-    使用场景：首次接入时了解服务能力和使用前提。
-    注意事项：此工具不需要任何参数，可直接调用；返回信息包含各层工具的使用前提条件。
+    Overview: Returns service overview, core capabilities, and usage limits.
+    Use case: Learn capabilities and prerequisites on first access.
+    Notes: No parameters required; returned info includes prerequisites for tools.
     """
     return await _call_tool("introduction", {})
 
@@ -86,22 +86,22 @@ async def guide_intro() -> str:
 
 @tool
 async def list_workspace(regionId: str) -> str:
-    """列出可用的CMS工作空间。
+    """List available CMS workspaces.
 
-    功能概述：获取指定区域内可用的Cloud Monitor Service (CMS)工作空间列表。
-    参数说明：regionId（阿里云区域标识符，如"cn-hangzhou"）。
-    返回结果：包含工作空间信息的字典（workspaces/total_count/region）。
+    Overview: Get CMS workspaces in the specified region.
+    Args: regionId (Aliyun region ID, e.g. "cn-hangzhou").
+    Returns: Workspace info dictionary (workspaces/total_count/region).
     """
     return await _call_tool("list_workspace", {"regionId": regionId})
 
 
 @tool
 async def list_domains(workspace: str, regionId: str) -> str:
-    """列出所有可用的实体域。
+    """List all available entity domains.
 
-    功能概述：获取系统中所有可用的实体域（domain）列表。
-    使用场景：了解支持的实体域与选择正确domain参数。
-    返回数据：每个域包含 __domain__（域名称）与 cnt（该域实体总数）。
+    Overview: Get all available entity domains.
+    Use case: Discover supported domains and choose the correct domain.
+    Returns: Each item includes __domain__ (name) and cnt (entity count).
     """
     return await _call_tool(
         "list_domains", {"workspace": workspace, "regionId": regionId}
@@ -117,11 +117,11 @@ async def umodel_search_entity_set(
     entity_set_name: Optional[str] = None,
     limit: Optional[int] = None,
 ) -> str:
-    """搜索实体集合，支持全文搜索并按相关度排序。
+    """Search entity sets with full-text search and relevance sorting.
 
-    功能概述：在UModel元数据中搜索实体集合定义，返回domain/name/display_name等元数据信息。
-    使用场景：实体集合发现与元数据探索。
-    参数：search_text、workspace、regionId（必需）；domain、entity_set_name、limit（可选）。
+    Overview: Search UModel metadata for entity set definitions; returns domain/name/display_name.
+    Use case: Entity set discovery and metadata exploration.
+    Args: search_text/workspace/regionId (required); domain/entity_set_name/limit (optional).
     """
     return await _call_tool(
         "umodel_search_entity_set",
@@ -148,12 +148,12 @@ async def umodel_list_data_set(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """列出指定实体的可用数据集合，为其他PaaS工具提供参数选项。
+    """List available data sets for an entity to supply parameters for PaaS tools.
 
-    功能概述：获取指定实体域与类型下可用的数据集合信息。
-    参数说明：data_set_types支持metric_set/log_set/event_set/trace_set/entity_set_name。
-    工具依赖：为umodel_get_metrics/logs/events/traces提供可选参数。
-    示例：
+    Overview: Get available data sets for a given domain and entity set.
+    Args: data_set_types supports metric_set/log_set/event_set/trace_set/entity_set_name.
+    Dependencies: Used by umodel_get_metrics/logs/events/traces.
+    Example:
         umodel_list_data_set(
             workspace="default-cms-xxx",
             domain="aiops",
@@ -188,11 +188,11 @@ async def umodel_list_related_entity_set(
     direction: Optional[str] = None,
     detail: Optional[bool] = None,
 ) -> str:
-    """列出与指定实体集合相关的其他实体集合。
+    """List entity sets related to the specified entity set.
 
-    功能概述：发现与源实体集合存在关系定义的其他实体集合类型。
-    功能特点：支持方向控制与关系类型过滤；元数据级别展示关系定义。
-    参数：workspace、domain、entity_set_name、regionId（必需）；relation_type、direction、detail（可选）。
+    Overview: Discover entity sets that have relationship definitions with the source set.
+    Features: Supports direction and relation_type filters; returns metadata-level definitions.
+    Args: workspace/domain/entity_set_name/regionId (required); relation_type/direction/detail (optional).
     """
     return await _call_tool(
         "umodel_list_related_entity_set",
@@ -221,13 +221,13 @@ async def umodel_get_entities(
     to_time: Optional[str] = None,
     limit: Optional[int] = None,
 ) -> str:
-    """获取实体信息的PaaS API工具。
+    """PaaS API tool to get entity information.
 
-    功能概述：检索实体基础信息，支持分页查询与精确ID查询。
-    工具分工：本工具用于基础实体信息；模糊搜索请用umodel_search_entities。
-    参数：workspace、domain、entity_set_name、regionId（必需）；entity_ids、from_time、to_time、limit（可选）。
-    示例：
-        # 获取实体并使用返回的 __entity_id__ 进行后续查询
+    Overview: Retrieve basic entity info with pagination and exact ID queries.
+    Scope: Use this for basic entity info; for fuzzy search use umodel_search_entities.
+    Args: workspace/domain/entity_set_name/regionId (required); entity_ids/from_time/to_time/limit (optional).
+    Example:
+        # Get entities and use returned __entity_id__ for follow-up queries
         umodel_get_entities(
             workspace="default-cms-xxx",
             domain="aiops",
@@ -266,11 +266,11 @@ async def umodel_search_entities(
     to_time: Optional[str] = None,
     limit: Optional[int] = None,
 ) -> str:
-    """基于关键词搜索实体信息。
+    """Search entities by keyword.
 
-    功能概述：在指定实体集合中按关键词进行模糊搜索与全文检索。
-    功能特点：支持数量控制与灵活过滤。
-    参数：workspace、domain、entity_set_name、search_text、regionId（必需）；from_time、to_time、limit（可选）。
+    Overview: Fuzzy and full-text search within the specified entity set.
+    Features: Supports limit control and flexible filtering.
+    Args: workspace/domain/entity_set_name/search_text/regionId (required); from_time/to_time/limit (optional).
     """
     return await _call_tool(
         "umodel_search_entities",
@@ -302,13 +302,13 @@ async def umodel_get_neighbor_entities(
     to_time: Optional[str] = None,
     limit: Optional[int] = None,
 ) -> str:
-    """获取指定实体的邻居实体信息。
+    """Get neighbor entities for a specified entity.
 
-    功能概述：基于实体间关联关系查找邻居实体。
-    使用场景：依赖分析、关联发现、故障影响评估、拓扑构建。
-    参数：workspace、domain、entity_set_name、entity_id、regionId（必需）；from_time、to_time、limit（可选）。
-    示例：
-        # entity_id 使用 umodel_get_entities 返回的 __entity_id__
+    Overview: Find neighboring entities based on relationships.
+    Use cases: Dependency analysis, relationship discovery, impact assessment, topology building.
+    Args: workspace/domain/entity_set_name/entity_id/regionId (required); from_time/to_time/limit (optional).
+    Example:
+        # entity_id from umodel_get_entities (__entity_id__)
         umodel_get_neighbor_entities(
             workspace="default-cms-xxx",
             domain="aiops",
@@ -346,11 +346,11 @@ async def umodel_get_golden_metrics(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """获取实体的黄金指标（关键性能指标）数据。
+    """Get golden metrics (key performance indicators) for entities.
 
-    参数获取：domain/entity_set_name通过umodel_search_entity_set，entity_ids可通过umodel_get_entities。
-    参数：workspace、domain、entity_set_name、regionId（必需）；entity_ids、from_time、to_time（可选）。
-    示例：
+    Parameter lookup: domain/entity_set_name from umodel_search_entity_set; entity_ids from umodel_get_entities.
+    Args: workspace/domain/entity_set_name/regionId (required); entity_ids/from_time/to_time (optional).
+    Example:
         umodel_get_golden_metrics(
             workspace="default-cms-xxx",
             domain="aiops",
@@ -392,16 +392,16 @@ async def umodel_get_metrics(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """获取实体的时序指标数据，支持range/instant查询、聚合计算和高级分析模式。
+    """Get time-series metrics for entities; supports range/instant, aggregation, and analysis modes.
 
-    参数获取：
+    Parameter lookup:
     - domain/entity_set_name: umodel_search_entity_set
     - metric_domain_name/metric: umodel_list_data_set(data_set_types="metric_set")
-    - entity_ids: umodel_get_entities（可选）
-    分析模式：basic/cluster/forecast/anomaly_detection。
-    重要说明：metric_domain_name 必须使用 list_data_set 返回的 name（如 aiops.metric.service），
-    不能使用 domain（如 aiops），否则会出现 Metric_Set not found。
-    示例：
+    - entity_ids: umodel_get_entities (optional)
+    Analysis modes: basic/cluster/forecast/anomaly_detection.
+    Important: metric_domain_name must be the name returned by list_data_set (e.g. aiops.metric.service),
+    not the domain (e.g. aiops), otherwise Metric_Set not found.
+    Example:
         umodel_get_metrics(
             workspace="default-cms-xxx",
             domain="aiops",
@@ -412,8 +412,8 @@ async def umodel_get_metrics(
             from_time=1766506202,
             to_time=1766507462
         )
-    参数：workspace、domain、entity_set_name、metric_domain_name、metric、regionId（必需）；
-    entity_ids、query_type、aggregate、analysis_mode、forecast_duration、from_time、to_time（可选）。
+    Args: workspace/domain/entity_set_name/metric_domain_name/metric/regionId (required);
+    entity_ids/query_type/aggregate/analysis_mode/forecast_duration/from_time/to_time (optional).
     """
     return await _call_tool(
         "umodel_get_metrics",
@@ -456,15 +456,16 @@ async def umodel_get_relation_metrics(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """获取实体间关系级别的指标数据，如服务调用延迟、吞吐量等。
+    """Get relation-level metrics between entities, e.g., call latency and throughput.
 
-    参数获取：
+    Parameter lookup:
     - src_domain/src_entity_set_name: umodel_search_entity_set
     - relation_type: umodel_list_related_entity_set
-    - src_entity_ids: umodel_get_entities（必填）
+    - src_entity_ids: umodel_get_entities (required)
     - metric_set_domain/metric_set_name/metric: umodel_list_data_set(data_set_types="metric_set")
-    参数：workspace、src_domain、src_entity_set_name、src_entity_ids、relation_type、direction、metric_set_domain、metric_set_name、metric、regionId（必需）；
-    dest_domain、dest_entity_set_name、dest_entity_ids、query_type、from_time、to_time（可选）。
+    Args: workspace/src_domain/src_entity_set_name/src_entity_ids/relation_type/direction/
+    metric_set_domain/metric_set_name/metric/regionId (required);
+    dest_domain/dest_entity_set_name/dest_entity_ids/query_type/from_time/to_time (optional).
     """
     return await _call_tool(
         "umodel_get_relation_metrics",
@@ -503,11 +504,13 @@ async def umodel_get_logs(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """获取实体相关的日志数据，用于故障诊断、性能分析、审计等场景。
+    """Get entity-related logs for diagnostics, performance analysis, and auditing.
 
-    参数获取：domain/entity_set_name通过umodel_search_entity_set；log_set_domain/log_set_name通过umodel_list_data_set(data_set_types="log_set")；
-    entity_ids可通过umodel_get_entities（可选）。
-    参数：workspace、domain、entity_set_name、log_set_name、log_set_domain、regionId（必需）；entity_ids、from_time、to_time（可选）。
+    Parameter lookup: domain/entity_set_name from umodel_search_entity_set;
+    log_set_domain/log_set_name from umodel_list_data_set(data_set_types="log_set");
+    entity_ids from umodel_get_entities (optional).
+    Args: workspace/domain/entity_set_name/log_set_name/log_set_domain/regionId (required);
+    entity_ids/from_time/to_time (optional).
     """
     return await _call_tool(
         "umodel_get_logs",
@@ -540,10 +543,12 @@ async def umodel_get_events(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """获取指定实体集的事件数据。
+    """Get event data for a specified entity set.
 
-    参数获取：event_set_domain/event_set_name可来自umodel_list_data_set(data_set_types="event_set")或默认"default"/"default.event.common"。
-    参数：workspace、domain、entity_set_name、event_set_domain、event_set_name、regionId（必需）；entity_ids、limit、from_time、to_time（可选）。
+    Parameter lookup: event_set_domain/event_set_name from umodel_list_data_set(data_set_types="event_set")
+    or defaults "default"/"default.event.common".
+    Args: workspace/domain/entity_set_name/event_set_domain/event_set_name/regionId (required);
+    entity_ids/limit/from_time/to_time (optional).
     """
     return await _call_tool(
         "umodel_get_events",
@@ -580,12 +585,13 @@ async def umodel_search_traces(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """基于过滤条件搜索trace并返回摘要信息。
+    """Search traces with filters and return summaries.
 
-    参数获取：domain/entity_set_name通过umodel_search_entity_set；trace_set_domain/trace_set_name通过umodel_list_data_set(data_set_types="trace_set")；
-    entity_ids可选；过滤条件包括min_duration_ms/has_error/max_duration_ms。
-    参数：workspace、domain、entity_set_name、trace_set_domain、trace_set_name、regionId（必需）；
-    entity_ids、min_duration_ms、max_duration_ms、has_error、limit、from_time、to_time（可选）。
+    Parameter lookup: domain/entity_set_name from umodel_search_entity_set;
+    trace_set_domain/trace_set_name from umodel_list_data_set(data_set_types="trace_set");
+    entity_ids optional; filters include min_duration_ms/has_error/max_duration_ms.
+    Args: workspace/domain/entity_set_name/trace_set_domain/trace_set_name/regionId (required);
+    entity_ids/min_duration_ms/max_duration_ms/has_error/limit/from_time/to_time (optional).
     """
     return await _call_tool(
         "umodel_search_traces",
@@ -621,11 +627,13 @@ async def umodel_get_traces(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """获取指定trace ID的详细trace数据，包括span、独占耗时与元数据。
+    """Get detailed trace data for specified trace IDs, including spans and metadata.
 
-    参数获取：trace_ids通常来自umodel_search_traces输出；trace_set_domain/trace_set_name通过umodel_list_data_set(data_set_types="trace_set")。
-    输出字段：duration_ms、exclusive_duration_ms。
-    参数：workspace、domain、entity_set_name、trace_set_domain、trace_set_name、trace_ids、regionId（必需）；from_time、to_time（可选）。
+    Parameter lookup: trace_ids usually from umodel_search_traces; trace_set_domain/trace_set_name from
+    umodel_list_data_set(data_set_types="trace_set").
+    Output fields: duration_ms, exclusive_duration_ms.
+    Args: workspace/domain/entity_set_name/trace_set_domain/trace_set_name/trace_ids/regionId (required);
+    from_time/to_time (optional).
     """
     return await _call_tool(
         "umodel_get_traces",
@@ -658,11 +666,12 @@ async def umodel_get_profiles(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """获取指定实体集的性能剖析数据。
+    """Get performance profiling data for a specified entity set.
 
-    参数获取：profile_set_domain/profile_set_name通过umodel_list_data_set(data_set_types="profile_set")；
-    entity_ids必须指定（数据量大）。
-    参数：workspace、domain、entity_set_name、profile_set_domain、profile_set_name、entity_ids、regionId（必需）；limit、from_time、to_time（可选）。
+    Parameter lookup: profile_set_domain/profile_set_name from umodel_list_data_set(data_set_types="profile_set");
+    entity_ids is required (large data volume).
+    Args: workspace/domain/entity_set_name/profile_set_domain/profile_set_name/entity_ids/regionId (required);
+    limit/from_time/to_time (optional).
     """
     return await _call_tool(
         "umodel_get_profiles",
@@ -685,11 +694,11 @@ async def umodel_get_profiles(
 
 @tool
 async def sls_text_to_sql(text: str, project: str, logStore: str, regionId: str) -> str:
-    """将自然语言转换为SLS查询语句。
+    """Convert natural language to an SLS query.
 
-    功能概述：当用户有明确的logstore查询需求，必须优先使用本工具生成查询语句。
-    使用限制：仅支持SLS查询语句，不支持其他数据库SQL；生成的是语句而非结果。
-    最佳实践：描述中不要包含项目或日志库名称；可指定时间范围。
+    Overview: When a logstore query is needed, use this tool first to generate the query.
+    Limits: Only SLS query syntax is supported; returns a query string, not results.
+    Best practice: Do not include project or logstore names in the text; specify time range if needed.
     """
     return await _call_tool(
         "sls_text_to_sql",
@@ -709,11 +718,11 @@ async def sls_execute_sql(
     offset: Optional[int] = None,
     reverse: Optional[bool] = None,
 ) -> str:
-    """执行SLS日志查询。
+    """Execute an SLS log query.
 
-    功能概述：在指定SLS项目与日志库执行查询并返回结果。
-    使用要求：若上下文未提供SQL，必须先用sls_text_to_sql生成语句。
-    时间范围：支持Unix时间戳（秒/毫秒）或相对时间表达式。
+    Overview: Run a query in the specified SLS project and logstore.
+    Requirement: If no SQL is provided, generate it with sls_text_to_sql first.
+    Time range: Supports Unix timestamps (seconds/ms) or relative expressions.
     """
     return await _call_tool(
         "sls_execute_sql",
@@ -743,11 +752,11 @@ async def sls_get_context_logs(
     back_lines: Optional[int] = None,
     forward_lines: Optional[int] = None,
 ) -> str:
-    """查询指定日志前后的上下文日志。
+    """Query context logs before and after a specific log entry.
 
-    功能概述：根据pack_id与pack_meta获取起始日志前后上下文日志（前后一天范围由服务限制）。
-    获取方式：先用sls_execute_sql并在语句末尾加 |with_pack_meta 获取__pack_id__/__pack_meta__。
-    参数说明：back_lines/forward_lines范围0~100且至少一个>0。
+    Overview: Use pack_id/pack_meta to fetch surrounding context (up to one day before/after).
+    How to get pack fields: Run sls_execute_sql and append |with_pack_meta to get __pack_id__/__pack_meta__.
+    Args: back_lines/forward_lines range 0~100 and at least one must be > 0.
     """
     return await _call_tool(
         "sls_get_context_logs",
@@ -776,10 +785,10 @@ async def sls_log_explore(
     filter_query: Optional[str] = None,
     groupField: Optional[str] = None,
 ) -> str:
-    """查看日志库日志数据聚合分析结果，提供日志数据概览信息。
+    """Explore aggregated log patterns to provide a log overview.
 
-    功能概述：给出日志模板与各模板数量分布。
-    使用场景：查看日志库概览信息与数据分布。
+    Overview: Returns log templates and their distribution.
+    Use case: View logstore overview and data distribution.
     """
     return await _call_tool(
         "sls_log_explore",
@@ -811,10 +820,10 @@ async def sls_log_compare(
     filter_query: Optional[str] = None,
     groupField: Optional[str] = None,
 ) -> str:
-    """查看日志库在两个时间范围内的日志分布对比结果。
+    """Compare log distributions across two time ranges.
 
-    功能概述：对比实验组与对照组时间范围内日志分布差异。
-    使用场景：发布前后、昨日/今日日志变化分析。
+    Overview: Compare log distribution differences between test and control windows.
+    Use case: Before/after release, yesterday vs today changes.
     """
     return await _call_tool(
         "sls_log_compare",
@@ -841,10 +850,10 @@ async def sls_list_projects(
     projectName: Optional[str] = None,
     limit: Optional[int] = None,
 ) -> str:
-    """列出阿里云日志服务中的所有项目。
+    """List all projects in Alibaba Cloud Log Service.
 
-    功能概述：列出指定区域中的SLS项目，支持按名称模糊搜索。
-    返回数据：project_name/description/region_id。
+    Overview: List SLS projects in the specified region; supports fuzzy name search.
+    Returns: project_name/description/region_id.
     """
     return await _call_tool(
         "sls_list_projects",
@@ -860,10 +869,10 @@ async def sls_execute_spl(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """执行原生SPL查询语句。
+    """Execute a raw SPL query.
 
-    功能概述：为高级用户提供最大灵活性与复杂分析能力。
-    注意事项：需要了解SPL语法，复杂查询可能消耗较多资源。
+    Overview: Provides maximum flexibility and advanced analysis.
+    Notes: Requires SPL knowledge; complex queries may consume more resources.
     """
     return await _call_tool(
         "sls_execute_spl",
@@ -887,10 +896,10 @@ async def sls_list_logstores(
     limit: Optional[int] = None,
     isMetricStore: Optional[bool] = None,
 ) -> str:
-    """列出SLS项目中的日志库。
+    """List logstores in an SLS project.
 
-    功能概述：列出项目内日志库，支持名称模糊搜索。
-    指标库：如需指标库请将isMetricStore设为True。
+    Overview: List logstores with optional fuzzy name search.
+    Metric stores: Set isMetricStore=True to list metric stores.
     """
     return await _call_tool(
         "sls_list_logstores",
@@ -910,10 +919,10 @@ async def sls_list_logstores(
 async def cms_text_to_promql(
     text: str, project: str, metricStore: str, regionId: str
 ) -> str:
-    """将自然语言转换为PromQL查询语句。
+    """Convert natural language to a PromQL query.
 
-    功能概述：将自然语言描述转换为有效PromQL语句。
-    使用限制：仅生成查询语句，不返回查询结果。
+    Overview: Convert a natural language description into a valid PromQL expression.
+    Limit: Generates query only, not results.
     """
     return await _call_tool(
         "cms_text_to_promql",
@@ -935,10 +944,10 @@ async def cms_execute_promql(
     from_time: Optional[str] = None,
     to_time: Optional[str] = None,
 ) -> str:
-    """执行PromQL指标查询。
+    """Execute a PromQL metrics query.
 
-    功能概述：在指定SLS项目与指标库执行PromQL查询并返回时序数据。
-    时间范围：支持Unix时间戳（秒/毫秒）或相对时间表达式。
+    Overview: Run PromQL against a metric store and return time-series data.
+    Time range: Supports Unix timestamps (seconds/ms) or relative expressions.
     """
     return await _call_tool(
         "cms_execute_promql",

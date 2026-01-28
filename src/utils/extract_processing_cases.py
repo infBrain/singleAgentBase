@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+###############
+# Extract processing cases from log files.
+###############
+
 import argparse
 import json
 import sys
