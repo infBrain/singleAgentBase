@@ -14,6 +14,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.mcp_tools import (
+    guide_intro,
     set_mcp_session,
     clear_mcp_session,
     introduction,
@@ -60,6 +61,7 @@ def get_llm() -> ChatOpenAI:
 
 def get_mcp_tools() -> List:
     return [
+        guide_intro,
         introduction,
         list_workspace,
         list_domains,

@@ -888,7 +888,7 @@ def _detect_anomalies_fcvae(
             torch.log(2 * torch.pi * var_last) + (x_last - mu_last) ** 2 / var_last
         )
         log_prob = log_prob.detach().cpu().numpy()
-        print(log_prob.mean(), log_prob.std())
+        # print(log_prob.mean(), log_prob.std())
         # 可视化：每个窗口最后一个点的原始值与重建均值（标准化尺度）
         orig_last = x_last.detach().cpu().numpy()
         recon_last = mu_last.detach().cpu().numpy()

@@ -67,21 +67,28 @@ async def introduction() -> str:
 
 @tool
 async def guide_intro() -> str:
-    """Return guidance for MCP tool usage flow and norms.
+    """Return guidance for root cause analysis (RCA) using MCP tools and workflow.
 
-    Overview: Provides expectations, call order, parameter choices, and error handling tips.
-    Use case: Obtain a unified MCP workflow guide before executing tasks.
+    Overview: Provides expectations, call order, parameter choices, and error handling tips for RCA tasks.
+    Use case: Obtain a unified RCA workflow guide before executing root cause localization tasks.
     Notes: Returns guidance text only and does not call MCP APIs.
     """
-    return (
-        "MCP Tool Usage Guide:\n"
-        "1) Identify regionId/workspace/time range first; call list_workspace if missing.\n"
-        "2) For entity info, start with umodel_search_entity_set/umodel_get_entities.\n"
-        "3) Before metrics/logs/events/traces, use umodel_list_data_set to confirm set names.\n"
-        "4) Query tools return text only; double-check field names and time windows if needed.\n"
-        "5) On empty results or errors, narrow the window and verify domain/entity_set_name.\n"
-        "6) Keep each call focused; avoid oversized queries and irrelevant parameters."
-    )
+    return """MCP RCA Workflow (trace-first with strict gating):
+        1) Setup discovery:
+        - list_workspace -> list_domains.
+        - Find the entity set for services/pods/nodes via umodel_search_entity_set, then get entities via umodel_get_entities (only if needed).
+        2) Trace-first:
+        - umodel_list_data_set(...trace_set...) -> umodel_search_traces(has_error/min_duration_ms) -> umodel_get_traces.
+        - If abnormal trace exists: walk root span, collect earliest abnormal entities as candidates.
+        3) If trace is missing / no abnormal trace:
+        - Use topology tools (umodel_get_neighbor_entities / umodel_list_related_entity_set) to derive entrypoints and call graph.
+        - Expand from entrypoints layer by layer with stop-loss (N visited, K children).
+        - Metrics gate first: umodel_get_golden_metrics (if available) else umodel_get_metrics(anomaly_detection).
+        - Logs confirmation: umodel_list_data_set(...log_set...) -> umodel_get_logs OR sls_text_to_sql + sls_execute_sql.
+        4) After candidates emerge, optionally pull related traces again to confirm abnormal calls.
+        5) Validate with topology direction and output up to 3 root causes mapped to {instance_type}.
+        Rules: never fabricate workspace/domain/set/metric/log_set; always discover first; if empty, narrow time window or stop.
+        """
 
 
 @tool

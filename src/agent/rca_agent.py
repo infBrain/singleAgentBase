@@ -11,12 +11,16 @@ from langgraph.prebuilt import create_react_agent
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.traditional_tools import (
+    guide_intro,
+    get_logs,
+    get_metrics,
+    get_traces,
     analyze_fault_type,
     detect_metrics,
     detect_traces,
     detect_logs,
     get_system_info,
-) # RCA not need get_logs/metrics/traces, analyze + detect is enough (contain raw data query)
+)  # RCA not need get_logs/metrics/traces, analyze + detect is enough (contain raw data query)
 
 # Setup LLM based on environment variables (similar to tools/llm_chat.py)
 BASE_URL = os.environ.get("OPENAI_BASE_URL", "")
@@ -61,9 +65,11 @@ def get_llm():
         )
 
 
-
-
 tools = [
+    guide_intro,
+    get_logs,
+    get_metrics,
+    get_traces,
     analyze_fault_type,
     detect_metrics,
     detect_traces,
