@@ -19,6 +19,7 @@ import json
 
 from utils.common_utils import (
     ML_METRICS,
+    _convert_to_beijing,
     _get_date_range,
     _get_instance_type,
     _convert_to_utc,
@@ -100,12 +101,22 @@ def get_metric_values_offline(
             f"TiDB metric ({metric_name}) cannot be used with non-pod instance ({instance})"
         )
 
-    # Parse and convert times to UTC
+    # # Parse and convert times to UTC
     start_utc = _parse_and_convert_time(start_time)
     end_utc = _parse_and_convert_time(end_time)
 
+    # # Get date range
+    # dates = _get_date_range(start_utc, end_utc)
+    beijing_tz = pytz.timezone("Asia/Shanghai")
+    start_dt = start_utc.astimezone(beijing_tz)
+    end_dt = end_utc.astimezone(beijing_tz)
+
     # Get date range
-    dates = _get_date_range(start_utc, end_utc)
+    dates = []
+    current_date = start_dt.date()
+    while current_date <= end_dt.date():
+        dates.append(current_date.strftime("%Y-%m-%d"))
+        current_date += timedelta(days=1)
 
     all_data = []
     # base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
@@ -1779,7 +1790,7 @@ if __name__ == "__main__":
     # Test code here if needed
     with open(os.path.join(base_path, "data", "label_test.json"), "rb") as f:
         labels = json.load(f)
-        # labels = labels[:1]  # For testing, limit to first 50 entries
+        labels = labels[:1]  # For testing, limit to first 50 entries
 
     for item in labels:
         print(item)
@@ -1790,7 +1801,7 @@ if __name__ == "__main__":
         trace_result = trace_anomaly_detection(start_time, end_time)
         item["log_result"] = log_result
         item["trace_result"] = trace_result
-        item["time_series_result"] = time_result
+        # item["time_series_result"] = time_result
 
     # with open(
     #     os.path.join(base_path, "result", "anomaly_results.json"), "w", encoding="utf-8"

@@ -1,272 +1,217 @@
 [
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Query the P99 (or P50/P95/P99 together) of `rrt` for `frontend-1` over the last 10 minutes. Compute percentiles as the 50th/95th/99th percentile of `rrt` samples within the window (exclude nulls)."
+    "level": "simple",
+    "type": "data",
+    "start_time": "2025-06-05T19:10:07Z",
+    "end_time": "2025-06-05T19:33:07Z",
+    "prompt": "Query the time series of node_memory_usage_rate for node 'aiops-k8s-06' during [${start_time}, ${end_time}]."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Query the `error_ratio` for `frontend-0/frontend-1/frontend-2` over the last 10 minutes."
+    "level": "simple",
+    "type": "data",
+    "start_time": "2025-06-05T16:10:02Z",
+    "end_time": "2025-06-05T16:31:02Z",
+    "prompt": "Query the time series of pod_cpu_usage for pods 'emailservice-0', 'emailservice-1', and 'emailservice-2' during [${start_time}, ${end_time}]."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Check whether `timeout` has increased significantly in the last 10 minutes (provide timeout count/ratio for `frontend`-related requests)."
+    "level": "simple",
+    "type": "data",
+    "start_time": "2025-06-06T00:10:14Z",
+    "end_time": "2025-06-06T00:29:14Z",
+    "prompt": "Query the time series of pod_cpu_usage for pods 'currencyservice-0', 'currencyservice-1', and 'currencyservice-2' during [${start_time}, ${end_time}]."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "Find the Top-5 pods with the largest `rrt` change rate in the last 30 minutes (pod-level across all services)."
+    "level": "simple",
+    "type": "data",
+    "start_time": "2025-06-05T18:10:05Z",
+    "end_time": "2025-06-05T18:34:05Z",
+    "prompt": "Query the time series of error_ratio for pods 'cartservice-0', 'cartservice-1', and 'cartservice-2' during [${start_time}, ${end_time}]."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "List all pods with `server_error_ratio > 1%` in the last 15 minutes and sort by `server_error_ratio` descending."
+    "level": "simple",
+    "type": "data",
+    "start_time": "2025-06-05T21:10:10Z",
+    "end_time": "2025-06-05T21:23:10Z",
+    "prompt": "From trace data, query spans on the call edge 'frontend' -> 'productcatalogservice' during [${start_time}, ${end_time}], and return avg(duration) and max(duration)."
+  },
+
+  {
+    "level": "hard",
+    "type": "data",
+    "start_time": "2025-06-06T01:10:16Z",
+    "end_time": "2025-06-06T01:21:16Z",
+    "prompt": "From trace data, query spans on the call edge 'frontend' -> 'adservice' during [${start_time}, ${end_time}], and return avg(duration) and max(duration)."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "Find pods that satisfy “5 consecutive samples with `rrt` above threshold θ” in the last 30 minutes (output pod + duration interval)."
+    "level": "hard",
+    "type": "data",
+    "start_time": "2025-06-05T23:10:13Z",
+    "end_time": "2025-06-05T23:24:13Z",
+    "prompt": "Compute delta(node_cpu_usage_rate) = max(node_cpu_usage_rate) - min(node_cpu_usage_rate) for node 'aiops-k8s-03' during [${start_time}, ${end_time}]."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Simple",
-    "prompt": "Query the direct downstream dependency services of `frontend` (based on provided call relationships)."
+    "level": "hard",
+    "type": "data",
+    "start_time": "2025-06-06T21:10:18Z",
+    "end_time": "2025-06-06T21:22:18Z",
+    "prompt": "Query the time series of node_filesystem_usage_rate for node 'aiops-k8s-06' during [${start_time}, ${end_time}], and compute delta(max-min) within the window."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "Query the complete downstream chain starting from `frontend` (expand to leaves), including `checkoutservice -> paymentservice -> shippingservice -> emailservice`."
+    "level": "hard",
+    "type": "data",
+    "start_time": "2025-06-05T20:10:09Z",
+    "end_time": "2025-06-05T20:34:09Z",
+    "prompt": "During [${start_time}, ${end_time}], compute avg(timeout) for pods 'checkoutservice-0','checkoutservice-1','checkoutservice-2' and for pods 'paymentservice-0','paymentservice-1','paymentservice-2', and report both pod-level results and a group-level comparison."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "List all upstream services of `emailservice`, grouped by hop (1-hop/2-hop/3-hop…)."
+    "level": "hard",
+    "type": "data",
+    "start_time": "2025-06-16T16:10:02Z",
+    "end_time": "2025-06-16T16:26:02Z",
+    "prompt": "During [${start_time}, ${end_time}], compute avg(server_error_ratio) grouped by pod, and return the Top-5 pods sorted by avg(server_error_ratio) descending."
+  },
+
+  {
+    "level": "simple",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "List all pods that belong to service 'paymentservice'."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "List services deployed on node `aiops-k8s-03`, aggregated by service (not by pod). Note: your scheduling table should show at least `adservice-1/cartservice-0/checkoutservice-1/currencyservice-1/emailservice?(none)/frontend-1/paymentservice-0/productcatalogservice-1/recommendationservice-1/shippingservice-0` (use your table as source of truth)."
+    "level": "simple",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "Find the node where pod 'paymentservice-1' is running."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Simple",
-    "prompt": "For all downstream services of `frontend` (adservice, productcatalogservice, currencyservice, recommendationservice, cartservice, checkoutservice), query their `rrt P99` in the last 10 minutes and output a list sorted by P99 descending. Compute P99 as the 99th percentile of `rrt` samples within the window (exclude nulls)."
+    "level": "simple",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "List all services deployed on node 'aiops-k8s-03' (deduplicated by service name)."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 10 minutes, identify the downstream service contributing most to the increase in end-to-end `frontend` `rrt` (output service + contribution score + evidence: its rrt/timeout/error_ratio)."
+    "level": "simple",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "Return the 1-hop downstream dependency services of 'frontend'."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 10 minutes, along the chain `frontend -> checkoutservice -> paymentservice -> shippingservice -> emailservice`, determine where the main bottleneck lies (which layer among checkout/payment/shipping/email has the most abnormal rrt/timeout) and provide P99 comparisons for each layer. Compute P99 as the 99th percentile of `rrt` samples within the window (exclude nulls)."
+    "level": "simple",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "Return the 1-hop downstream dependency services of 'checkoutservice'."
+  },
+
+  {
+    "level": "hard",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "Enumerate all downstream call paths starting from 'frontend' to all leaf services (return each path as an ordered list of services)."
   },
   {
-    "task_category": "Task 1: Degraded frontend experience (frontend P99 latency increase)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 10 minutes, if `frontend` `error_ratio` rises while downstream is healthy (error_ratio/timeout normal) but `frontend` is still slow, output likely root-cause directions (e.g., frontend itself, node resources, network) and list supporting evidence metrics (node_cpu_usage_rate / node_network_* / pod_cpu_usage, etc.)."
+    "level": "hard",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "Return the 1-hop, 2-hop, and 3-hop upstream caller sets of service 'paymentservice', grouped by hop."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Query the `checkoutservice` `error_ratio` (or `server_error_ratio`) curve over the last 20 minutes."
+    "level": "hard",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "Compute the intersection of (services deployed on node 'aiops-k8s-03') and (1-hop downstream services of 'frontend'), and return the resulting service set."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Query `paymentservice` `timeout` and `server_error_ratio` over the last 20 minutes."
+    "level": "hard",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "For each node hosting any 'paymentservice' pod, list all co-located services on that node (output as node -> services)."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Query `shippingservice` `rrt P99` over the last 20 minutes. Compute P99 as the 99th percentile of `rrt` samples within the window (exclude nulls)."
+    "level": "hard",
+    "type": "knowledge",
+    "start_time": null,
+    "end_time": null,
+    "prompt": "Find the Top-3 services with the largest out-degree (number of direct downstream dependencies) in the service call graph, and return each service with its out-degree."
+  },
+
+  {
+    "level": "simple",
+    "type": "fusion",
+    "start_time": "2025-06-05T16:10:02Z",
+    "end_time": "2025-06-05T16:31:02Z",
+    "prompt": "During [${start_time}, ${end_time}], resolve pods of service 'emailservice', compute avg(pod_cpu_usage) per pod, then compute the service-level avg(pod_cpu_usage) across those pods."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 20 minutes, list all pods with `error_ratio > 2%` (cluster-wide) and label their error rates."
+    "level": "simple",
+    "type": "fusion",
+    "start_time": "2025-06-05T19:10:07Z",
+    "end_time": "2025-06-05T19:33:07Z",
+    "prompt": "During [${start_time}, ${end_time}], resolve all pods running on node 'aiops-k8s-06', compute avg(pod_cpu_usage) per pod, and return the Top-5 pods by avg(pod_cpu_usage) descending."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 20 minutes, find Top-5 pods with the fastest `request` growth (potential traffic surge)."
+    "level": "simple",
+    "type": "fusion",
+    "start_time": "2025-06-05T21:10:10Z",
+    "end_time": "2025-06-05T21:23:10Z",
+    "prompt": "During [${start_time}, ${end_time}], compute avg(trace span duration) on the call edge 'frontend' -> 'productcatalogservice', and also compute avg(rrt) for each pod of 'productcatalogservice'."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "Compare two windows (e.g., `[T-40m, T-20m]` vs `[T-20m, T]`) and compute `checkoutservice` `error_ratio` change (before/after/diff/%)."
+    "level": "simple",
+    "type": "fusion",
+    "start_time": "2025-06-05T20:10:09Z",
+    "end_time": "2025-06-05T20:34:09Z",
+    "prompt": "During [${start_time}, ${end_time}], compute avg(trace span duration) on the call edge 'checkoutservice' -> 'paymentservice', and also compute avg(timeout) for each pod of 'checkoutservice'."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Simple",
-    "prompt": "Query the direct downstream service of `checkoutservice` (expected `paymentservice` based on given relationships)."
+    "level": "simple",
+    "type": "fusion",
+    "start_time": "2025-06-06T21:10:18Z",
+    "end_time": "2025-06-06T21:22:18Z",
+    "prompt": "During [${start_time}, ${end_time}], resolve all services deployed on node 'aiops-k8s-06', compute sum(pod_fs_writes_bytes) grouped by service, and return the Top-3 services by sum descending."
+  },
+
+  {
+    "level": "hard",
+    "type": "fusion",
+    "start_time": "2025-06-05T17:10:04Z",
+    "end_time": "2025-06-05T17:33:04Z",
+    "prompt": "During [${start_time}, ${end_time}], along the chain 'checkoutservice' -> 'paymentservice' -> 'shippingservice' -> 'emailservice', compute avg(trace span duration) for each call edge and return the edge with the highest avg(duration)."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "Query the complete downstream chain starting from `checkoutservice` (until emailservice)."
+    "level": "hard",
+    "type": "fusion",
+    "start_time": "2025-06-05T18:10:05Z",
+    "end_time": "2025-06-05T18:34:05Z",
+    "prompt": "During [${start_time}, ${end_time}], resolve the 1-hop upstream callers of 'cartservice', compute avg(error_ratio) for each caller service, and return the services sorted by avg(error_ratio) descending."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "List all upstream services of `paymentservice` (should include checkoutservice and further upstream to frontend)."
+    "level": "hard",
+    "type": "fusion",
+    "start_time": "2025-06-06T01:10:16Z",
+    "end_time": "2025-06-06T01:21:16Z",
+    "prompt": "During [${start_time}, ${end_time}], compute avg(trace span duration) on the call edge 'frontend' -> 'adservice', and also compute avg(timeout) for each pod of 'adservice'."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "List the deployment nodes for the three `paymentservice` pods: `paymentservice-0 -> aiops-k8s-03`, `paymentservice-1 -> aiops-k8s-08`, `paymentservice-2 -> aiops-k8s-01`."
+    "level": "hard",
+    "type": "fusion",
+    "start_time": "2025-06-05T21:10:10Z",
+    "end_time": "2025-06-05T21:23:10Z",
+    "prompt": "Compare two windows: A=[${start_time}, ${end_time}] and B=[2025-06-06T01:10:16Z, 2025-06-06T01:21:16Z]. Resolve the 1-hop downstream services of 'frontend', compute avg(rrt) per service in A and in B, then return the Top-3 services with the largest increase (B - A)."
   },
   {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Simple",
-    "prompt": "Query the `timeout` for the three `paymentservice` pods over the last 20 minutes, and sort by timeout descending (pod-level)."
-  },
-  {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "When `checkoutservice` error ratio increases, along `checkoutservice -> paymentservice -> shippingservice -> emailservice`, identify the most likely root-cause services (Top-3) with evidence: abnormality of error_ratio/timeout/rrt and time alignment."
-  },
-  {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 20 minutes, find the most abnormal `paymentservice` pod and output whether its node (`aiops-k8s-03/08/01`) shows synchronized anomalies in `node_cpu_usage_rate / node_memory_usage_rate / node_sockstat_TCP_inuse` (to distinguish service vs node issues)."
-  },
-  {
-    "task_category": "Task 2: Checkout chain failure (checkoutservice error ratio increase, suspect payment chain)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "Impact analysis: if `paymentservice` is abnormal, list possibly affected upstream services (at least checkoutservice and frontend) and report whether their `error_ratio/rrt` degrade in sync (output affected_services + metric alignment results)."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Query `node_cpu_usage_rate` and `node_memory_usage_rate` for `aiops-k8s-03` over the last 30 minutes."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Query `node_network_receive_packets_total` and `node_network_transmit_packets_total` for `aiops-k8s-03` over the last 30 minutes."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 30 minutes, find Top-3 nodes with the highest peak `node_cpu_usage_rate`."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 30 minutes, find Top-3 nodes with the fastest growth of `node_sockstat_TCP_inuse` (connection pressure)."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "In the last 30 minutes, find Top-5 pods with the fastest growth of `pod_network_transmit_bytes` (pod level)."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Simple",
-    "prompt": "List pods on node `aiops-k8s-03` (from the scheduling table)."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "Group pods on `aiops-k8s-03` by service and output a `{service: [pods...]}` mapping."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "Among services on `aiops-k8s-03`, identify which ones are direct downstream dependencies of `frontend` (intersection of deployment and call relations)."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Simple",
-    "prompt": "In the last 30 minutes, find Top-5 pods by `pod_cpu_usage` on `aiops-k8s-03` (output pod + cpu)."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "On `aiops-k8s-03`, find the service pair with the most severe resource contention in the last 30 minutes (rule example: two services on the same node whose `pod_cpu_usage` rises together and whose `rrt` degrades together). Output service_pair + contention_score + evidence metrics."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "When `node_cpu_usage_rate` rises on `aiops-k8s-03`, find the Top-3 services on that node with the most severe `rrt` degradation (requires service↔pods mapping + rrt aggregation)."
-  },
-  {
-    "task_category": "Task 3: Node-level resource contention (multiple services slow/flaky on same node)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "Node vs single-service diagnosis: if `aiops-k8s-03` resources are abnormal and multiple services on the node show synchronized `rrt/error_ratio` degradation, conclude “more likely node-level issue”; if only `paymentservice-0` shows rrt/timeout anomalies while other services are normal, conclude “more likely service-level issue”. Output the conclusion and at least three supporting metrics."
-  },
-  {
-    "task_category": "Task 4: Abnormal restarts and stability (k8s metadata + metrics)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Simple",
-    "prompt": "Query Top-5 pods by `RESTARTS` (from k8s metadata)."
-  },
-  {
-    "task_category": "Task 4: Abnormal restarts and stability (k8s metadata + metrics)",
-    "focus_layer": "Data Layer",
-    "difficulty": "Hard",
-    "prompt": "For `adservice-1`, align the 10 minutes before and after its most recent restart and output the Top-3 metrics with the most significant changes among `pod_cpu_usage/pod_processes/pod_network_*`."
-  },
-  {
-    "task_category": "Task 4: Abnormal restarts and stability (k8s metadata + metrics)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Simple",
-    "prompt": "Which node is `adservice-1` deployed on (aiops-k8s-03)?"
-  },
-  {
-    "task_category": "Task 4: Abnormal restarts and stability (k8s metadata + metrics)",
-    "focus_layer": "Knowledge / Topology Layer",
-    "difficulty": "Hard",
-    "prompt": "List other services on the same node as `adservice-1` (aiops-k8s-03), for resource contention analysis."
-  },
-  {
-    "task_category": "Task 4: Abnormal restarts and stability (k8s metadata + metrics)",
-    "focus_layer": "Data + Knowledge Layer",
-    "difficulty": "Hard",
-    "prompt": "If `adservice` is unstable (many restarts), infer the impact on `frontend`: first give the affected call path (frontend->adservice), then align whether `frontend` `error_ratio/rrt` worsens in the same time window (output evidence)."
+    "level": "hard",
+    "type": "fusion",
+    "start_time": "2025-06-06T21:10:18Z",
+    "end_time": "2025-06-06T21:22:18Z",
+    "prompt": "During [${start_time}, ${end_time}], resolve all pods on node 'aiops-k8s-06', compute sum(pod_fs_reads_bytes) per pod, return the Top-3 pods, and for each top pod also output its owning service and the sum value."
   }
 ]
