@@ -70,7 +70,6 @@
     "end_time": "2025-06-16T16:26:02Z",
     "prompt": "During [${start_time}, ${end_time}], compute avg(server_error_ratio) grouped by pod, and return the Top-5 pods sorted by avg(server_error_ratio) descending."
   },
-
   {
     "level": "simple",
     "type": "knowledge",

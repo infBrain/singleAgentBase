@@ -18,33 +18,33 @@ from tools.mcp_tools import (
     guide_intro,
     set_mcp_session,
     clear_mcp_session,
-    # introduction,
-    # list_workspace,
-    # list_domains,
-    # umodel_search_entity_set,
-    # umodel_list_data_set,
-    # umodel_list_related_entity_set,
-    # umodel_get_entities,
-    # umodel_search_entities,
-    # umodel_get_neighbor_entities,
-    # umodel_get_golden_metrics,
-    # umodel_get_metrics,
-    # umodel_get_relation_metrics,
-    # umodel_get_logs,
-    # umodel_get_events,
-    # umodel_search_traces,
-    # umodel_get_traces,
-    # umodel_get_profiles,
-    # sls_text_to_sql,
-    # sls_execute_sql,
-    # sls_get_context_logs,
-    # sls_log_explore,
-    # sls_log_compare,
-    # sls_list_projects,
-    # sls_execute_spl,
-    # sls_list_logstores,
-    # cms_text_to_promql,
-    # cms_execute_promql,
+    introduction,
+    list_workspace,
+    list_domains,
+    umodel_search_entity_set,
+    umodel_list_data_set,
+    umodel_list_related_entity_set,
+    umodel_get_entities,
+    umodel_search_entities,
+    umodel_get_neighbor_entities,
+    umodel_get_golden_metrics,
+    umodel_get_metrics,
+    umodel_get_relation_metrics,
+    umodel_get_logs,
+    umodel_get_events,
+    umodel_search_traces,
+    umodel_get_traces,
+    umodel_get_profiles,
+    sls_text_to_sql,
+    sls_execute_sql,
+    sls_get_context_logs,
+    sls_log_explore,
+    sls_log_compare,
+    sls_list_projects,
+    sls_execute_spl,
+    sls_list_logstores,
+    cms_text_to_promql,
+    cms_execute_promql,
 )
 
 
@@ -62,34 +62,34 @@ def get_llm() -> ChatOpenAI:
 
 def get_mcp_tools() -> List:
     return [
-        guide_intro
-        # introduction,
-        # list_workspace,
-        # list_domains,
-        # umodel_search_entity_set,
-        # umodel_list_data_set,
-        # umodel_list_related_entity_set,
-        # umodel_get_entities,
-        # umodel_search_entities,
-        # umodel_get_neighbor_entities,
-        # umodel_get_golden_metrics,
-        # umodel_get_metrics,
-        # umodel_get_relation_metrics,
-        # umodel_get_logs,
-        # umodel_get_events,
-        # umodel_search_traces,
-        # umodel_get_traces,
-        # umodel_get_profiles,
-        # sls_text_to_sql,
-        # sls_execute_sql,
-        # sls_get_context_logs,
-        # sls_log_explore,
-        # sls_log_compare,
-        # sls_list_projects,
-        # sls_execute_spl,
-        # sls_list_logstores,
-        # cms_text_to_promql,
-        # cms_execute_promql,
+        guide_intro,
+        introduction,
+        list_workspace,
+        list_domains,
+        umodel_search_entity_set,
+        umodel_list_data_set,
+        umodel_list_related_entity_set,
+        umodel_get_entities,
+        umodel_search_entities,
+        umodel_get_neighbor_entities,
+        umodel_get_golden_metrics,
+        umodel_get_metrics,
+        umodel_get_relation_metrics,
+        umodel_get_logs,
+        umodel_get_events,
+        umodel_search_traces,
+        umodel_get_traces,
+        umodel_get_profiles,
+        sls_text_to_sql,
+        sls_execute_sql,
+        sls_get_context_logs,
+        sls_log_explore,
+        sls_log_compare,
+        sls_list_projects,
+        sls_execute_spl,
+        sls_list_logstores,
+        cms_text_to_promql,
+        cms_execute_promql,
     ]
 
 
@@ -100,9 +100,12 @@ async def run_mcp_agent_logic(
     set_mcp_session(session)
 
     llm = get_llm()
-    # tools = get_mcp_tools()
-    tools = await load_mcp_tools(session) 
-    tools.append(guide_intro)
+    tools = get_mcp_tools()
+
+    # use call to load tools dynamically instead of loading all at once
+    # tools = await load_mcp_tools(session) 
+    # tools.append(guide_intro)
+
     agent = create_react_agent(llm, tools)
 
     msg = {
