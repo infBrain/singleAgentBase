@@ -663,6 +663,76 @@ def time_series_anomaly_detection(
             )
         )
         return "\n".join([item for item in results if item != ""])
+    elif instance.lower() in all_pod and "all" == metric_name.lower():
+        pod_metrics = infra_pod_metric_names + apm_metric_names
+        for metric in pod_metrics:
+            try:
+                results.append(
+                    time_series_anomaly_detection(
+                        start_time, end_time, metric, instance
+                    )
+                )
+            except Exception as e:
+                print(
+                    f"Error in TSAD: [{start_time}-{end_time}] {metric} {instance}, {e}"
+                )
+                continue
+        return "\n".join([item for item in results if item != ""])
+    elif instance.lower() in all_nodes and "all" == metric_name.lower():
+        for metric in infra_node_metric_names:
+            try:
+                results.append(
+                    time_series_anomaly_detection(
+                        start_time, end_time, metric, instance
+                    )
+                )
+            except Exception as e:
+                print(
+                    f"Error in TSAD: [{start_time}-{end_time}] {metric} {instance}, {e}"
+                )
+                continue
+        return "\n".join([item for item in results if item != ""])
+    elif instance.lower() in all_service and "all" == metric_name.lower():
+        for metric in apm_metric_names:
+            try:
+                results.append(
+                    time_series_anomaly_detection(
+                        start_time, end_time, metric, instance
+                    )
+                )
+            except Exception as e:
+                print(
+                    f"Error in TSAD: [{start_time}-{end_time}] {metric} {instance}, {e}"
+                )
+                continue
+        return "\n".join([item for item in results if item != ""])
+    elif instance.lower() in tidb_pods and "all" == metric_name.lower():
+        if "pd" in instance:
+            metric_names = [
+                metric.replace("pd_", "") for metric in tidb_pd_metric_names
+            ]
+        elif "tikv" in instance:
+            metric_names = [
+                metric.replace("tikv_", "") for metric in tidb_tikv_metric_names
+            ]
+        else:  # tidb_
+            metric_names = [
+                metric.replace("tidb_", "") for metric in infra_tidb_metric_names
+            ]
+
+        for metric in metric_names:
+            try:
+                results.append(
+                    time_series_anomaly_detection(
+                        start_time, end_time, metric, instance
+                    )
+                )
+            except Exception as e:
+                print(
+                    f"Error in TSAD: [{start_time}-{end_time}] {metric} {instance}, {e}"
+                )
+                continue
+        return "\n".join([item for item in results if item != ""])
     else:
         pass
 
@@ -1005,7 +1075,7 @@ def get_trace_values_offline(
 
         # Process each hour file
         for hour in range(start_hour, end_hour + 1):
-            file_name = f"trace_jaeger-span_{date}_{hour:02d}-59-00.parquet"
+            file_name = f"trace_jaeger-span_{date}_{hour:02d}-00-00.parquet"
             file_path = os.path.join(date_path, file_name)
 
             if not os.path.exists(file_path):
@@ -1270,7 +1340,7 @@ def get_logs_offline(
 
         # Process each hour file
         for hour in range(start_hour, end_hour + 1):
-            file_name = f"log_filebeat-server_{date}_{hour:02d}-59-00.parquet"
+            file_name = f"log_filebeat-server_{date}_{hour:02d}-00-00.parquet"
             file_path = os.path.join(date_path, file_name)
 
             if not os.path.exists(file_path):

@@ -551,7 +551,7 @@ async def run_mcp_only(
     )
     prompt_end_time = _beijing_to_unix_seconds(
         _convert_to_beijing(end_time, delay=delay)
-    )
+    )   
     system_prompt = build_system_prompt(
         prompt_start_time, prompt_end_time, instance_type
     )
