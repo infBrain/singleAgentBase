@@ -495,6 +495,8 @@ def time_series_anomaly_detection(
         for i in ["-0", "-1", "-2"]:
             all_pod.append(service + i)
 
+    results = []
+    
     if "all" in instance.lower() and "all" in metric_name.lower():
         # all_nodes = [
         #     "aiops-k8s-01",
@@ -524,7 +526,7 @@ def time_series_anomaly_detection(
         # for service in all_service:
         #     for i in ["-0", "-1", "-2"]:
         #         all_pod.append(service + i)
-        results = []
+        # results = []
         for metric in apm_metric_names:
             for service in all_service:
                 results.append(
@@ -589,7 +591,7 @@ def time_series_anomaly_detection(
         #     "emailservice",
         #     "paymentservice",
         # ]
-        results = []
+        # results = []
         for service in all_service:
             results.append(
                 time_series_anomaly_detection(
@@ -613,7 +615,7 @@ def time_series_anomaly_detection(
         # for service in all_service:
         #     for i in ["-0", "-1", "-2"]:
         #         all_pod.append(service + i)
-        results = []
+        # results = []
         for pod in all_pod:
             results.append(
                 time_series_anomaly_detection(start_time, end_time, metric_name, pod)
@@ -633,14 +635,14 @@ def time_series_anomaly_detection(
         #     "k8s-master2",
         #     "k8s-master3",
         # ]
-        results = []
+        # results = []
         for node in all_nodes:
             results.append(
                 time_series_anomaly_detection(start_time, end_time, metric_name, node)
             )
         return "\n".join([item for item in results if item != ""])
     elif "all" in instance.lower() and _get_metric_type(metric_name) == "infra_tidb":
-        results = []
+        # results = []
         results.append(
             time_series_anomaly_detection(
                 start_time, end_time, metric_name, pod=tidb_pods[0]
@@ -648,7 +650,7 @@ def time_series_anomaly_detection(
         )
         return "\n".join([item for item in results if item != ""])
     elif "all" in instance.lower() and _get_metric_type(metric_name) == "tidb_pd":
-        results = []
+        # results = []
         results.append(
             time_series_anomaly_detection(
                 start_time, end_time, metric_name, pod=tidb_pods[1]
@@ -656,7 +658,7 @@ def time_series_anomaly_detection(
         )
         return "\n".join([item for item in results if item != ""])
     elif "all" in instance.lower() and _get_metric_type(metric_name) == "tidb_tikv":
-        results = []
+        # results = []
         results.append(
             time_series_anomaly_detection(
                 start_time, end_time, metric_name, pod=tidb_pods[2]
@@ -1783,15 +1785,15 @@ if __name__ == "__main__":
         print(item)
         start_time = item["start_time"]
         end_time = item["end_time"]
-        time_result = time_series_anomaly_detection(start_time, end_time, "all", "all")
+        time_result = time_series_anomaly_detection(start_time, end_time, "all", "emailservice")
         log_result = log_anomaly_detection(start_time, end_time)
         trace_result = trace_anomaly_detection(start_time, end_time)
         item["log_result"] = log_result
         item["trace_result"] = trace_result
         item["time_series_result"] = time_result
 
-    with open(
-        os.path.join(base_path, "result", "anomaly_results.json"), "w", encoding="utf-8"
-    ) as f:
-        json.dump(labels, f, ensure_ascii=False, indent=2)
+    # with open(
+    #     os.path.join(base_path, "result", "anomaly_results.json"), "w", encoding="utf-8"
+    # ) as f:
+    #     json.dump(labels, f, ensure_ascii=False, indent=2)
         # f.write(result)

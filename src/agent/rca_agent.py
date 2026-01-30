@@ -12,9 +12,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.traditional_tools import (
     guide_intro,
-    get_logs,
-    get_metrics,
-    get_traces,
+    # get_logs,
+    # get_metrics,
+    # get_traces,
     analyze_fault_type,
     detect_metrics,
     detect_traces,
@@ -67,9 +67,9 @@ def get_llm():
 
 tools = [
     guide_intro,
-    get_logs,
-    get_metrics,
-    get_traces,
+    # get_logs,
+    # get_metrics,
+    # get_traces,
     analyze_fault_type,
     detect_metrics,
     detect_traces,
