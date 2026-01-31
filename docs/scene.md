@@ -1,0 +1,61 @@
+## 数据场景查询（Data Query）
+
+### 简单（5）
+
+1. 查询节点 **aiops-k8s-06** 在 **2025-06-05T19:10:07Z, 2025-06-05T19:33:07Z** 的 **node_memory_usage_rate** 时间序列。
+2. 查询 Pod **emailservice-0、emailservice-1、emailservice-2** 在 **2025-06-05T16:10:02Z, 2025-06-05T16:31:02Z** 的 **pod_cpu_usage** 时间序列。
+3. 查询 Pod **productcatalogservice-0、productcatalogservice-1、productcatalogservice-2** 在 **2025-06-06T00:10:14Z, 2025-06-06T00:29:14Z** 的 **pod_cpu_usage** 时间序列。
+4. 查询 Pod **cartservice-0、cartservice-1、cartservice-2** 在 **2025-06-05T18:10:05Z, 2025-06-05T18:34:05Z** 的 **error_ratio** 时间序列。
+5. 查询 **trace** 中调用边 **frontend → productcatalogservice** 在 **2025-06-05T21:10:10Z, 2025-06-05T21:23:10Z** 的 **span duration（延迟）**，输出 **avg(duration)** 与 **max(duration)**。
+
+### 复杂（5）
+
+1. 查询 **trace** 中调用边 **frontend → recommendationservice** 在 **2025-06-06T01:10:16Z, 2025-06-06T01:21:16Z** 的 **span duration（延迟）**，输出 **avg(duration)** 与 **max(duration)**。
+2. 在 **2025-06-05T23:10:13Z, 2025-06-05T23:24:13Z** 内，计算节点 **aiops-k8s-03** 的 **node_cpu_usage_rate 的 delta(max-min)**。
+3. 在 **2025-06-06T21:10:18Z, 2025-06-06T21:22:18Z** 内，查询节点 **aiops-k8s-06** 的 **node_filesystem_usage_rate** 时间序列，并计算该窗口内 **delta(max-min)**。
+4. 在 **2025-06-05T20:10:09Z, 2025-06-05T20:34:09Z** 内，分别查询 **checkoutservice-0/1/2** 与 **shippingservice-0/1/2** 的 **timeout**，输出每个 pod 的 **avg(timeout)** 并给出两组 pod 的整体对比（如均值对比）。
+5. 在 **2025-06-16T16:10:02Z, 2025-06-16T16:26:02Z** 内，按 pod 聚合计算 **avg(server_error_ratio)**，输出 **Top-5 pods**（降序）。
+
+---
+
+## 知识场景查询（Knowledge Query）
+
+### 简单（5）
+
+1. 查询服务 **shippingservice** 拥有哪些 Pod。
+2. 查询 Pod **shippingservice-1** 部署在哪个节点。
+3. 查询节点 **aiops-k8s-03** 上部署了哪些服务。
+4. 查询服务 **frontend** 的 **1-hop 下游依赖服务集合**。
+5. 查询服务 **checkoutservice** 的 **1-hop 下游依赖服务集合**。
+
+### 复杂（5）
+
+1. 枚举从 **frontend** 到所有叶子服务的 **全部下游路径集合**。
+2. 查询服务 **shippingservice** 的 **1-hop / 2-hop / 3-hop 上游调用者集合**（按 hop 分层输出）。
+3. 查询集合交集：**(部署在 aiops-k8s-03 的服务)** ∩ **(frontend 的 1-hop 下游服务)**。
+4. 查询与 **shippingservice** 在同一节点上共置的服务集合（按 node 分组输出 node→services）。
+5. 查询调用图中 **out-degree 最大的 Top-3 服务**及其下游数量。
+
+---
+
+## 融合场景查询（Fusion Query）
+
+### 简单（5）
+
+1. 在 **2025-06-05T16:10:02Z, 2025-06-05T16:31:02Z** 内，查询 **emailservice** 的所有 Pod 的 **avg(pod_cpu_usage)**，并汇总得到 **emailservice 的 service-level avg(pod_cpu_usage)**。
+2. 在 **2025-06-05T19:10:07Z, 2025-06-05T19:33:07Z** 内，查询节点 **aiops-k8s-06** 上所有 Pod 的 **avg(pod_cpu_usage)**，输出 **Top-5 pods**（降序）。
+3. 在 **2025-06-05T21:10:10Z, 2025-06-05T21:23:10Z** 内，查询 **trace** 中调用边 **frontend → productcatalogservice** 的 **avg(duration)**，同时查询 **productcatalogservice** 的所有 Pod 的 **avg(rrt)**。
+4. 在 **2025-06-05T20:10:09Z, 2025-06-05T20:34:09Z** 内，查询 **trace** 中调用边 **frontend → recommendationservice** 的 **avg(duration)**，同时查询 **recommendationservice** 的所有 Pod 的 **avg(timeout)**。
+5. 在 **2025-06-06T21:10:18Z, 2025-06-06T21:22:18Z** 内，查询节点 **aiops-k8s-06** 上所有服务的 **sum(pod_fs_writes_bytes)**（按 service 聚合），输出 **Top-3 服务**（降序）。
+
+### 复杂（5）
+
+1. 在 **2025-06-05T17:10:04Z, 2025-06-05T17:33:04Z** 内，沿调用链 **frontend → checkoutservice → shippingservice → emailservice**，分别计算每条调用边的 **avg(trace span duration)**，并输出 **延迟最大的调用边**。
+2. 在 **2025-06-05T18:10:05Z, 2025-06-05T18:34:05Z** 内，查询 **cartservice** 的 **1-hop 上游调用者集合**，并计算这些上游服务的 **avg(error_ratio)**，输出按 error_ratio 降序的列表。
+3. 在 **2025-06-06T01:10:16Z, 2025-06-06T01:21:16Z** 内，查询调用边 **frontend → productcatalogservice** 的 **avg(trace span duration)**，并在同一窗口内输出 **productcatalogservice** 的所有 Pod 的 **avg(timeout)**。
+4. 对比两个窗口：
+
+   * A=**2025-06-05T21:10:10Z, 2025-06-05T21:23:10Z**
+   * B=**2025-06-06T01:10:16Z, 2025-06-06T01:21:16Z**
+     查询 **frontend 的 1-hop 下游服务集合**，分别计算各下游服务在 A/B 的 **avg(rrt)**，输出 **rrt 增幅最大的 Top-3 下游服务**。
+5. 在 **2025-06-06T21:10:18Z, 2025-06-06T21:22:18Z** 内，先找出节点 **aiops-k8s-06** 上 **sum(pod_fs_reads_bytes) 最大的 Top-3 pods**，再输出这些 pods 所属服务及其对应的 sum 值。

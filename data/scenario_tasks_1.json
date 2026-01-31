@@ -1,0 +1,190 @@
+[
+    {
+        "level": "simple",
+        "type": "data",
+        "start_time": "2025-06-05T19:10:07Z",
+        "end_time": "2025-06-05T19:33:07Z",
+        "prompt": "Query the time series of node_memory_usage_rate for node 'aiops-k8s-06' during [${start_time}, ${end_time}]."
+    },
+    {
+        "level": "simple",
+        "type": "data",
+        "start_time": "2025-06-05T16:10:02Z",
+        "end_time": "2025-06-05T16:31:02Z",
+        "prompt": "Query the time series of pod_cpu_usage for pods 'emailservice-0', 'emailservice-1', and 'emailservice-2' during [${start_time}, ${end_time}]."
+    },
+    {
+        "level": "simple",
+        "type": "data",
+        "start_time": "2025-06-06T00:10:14Z",
+        "end_time": "2025-06-06T00:29:14Z",
+        "prompt": "Query the time series of pod_cpu_usage for pods 'productcatalogservice-0', 'productcatalogservice-1', and 'productcatalogservice-2' during [${start_time}, ${end_time}]."
+    },
+    {
+        "level": "simple",
+        "type": "data",
+        "start_time": "2025-06-05T18:10:05Z",
+        "end_time": "2025-06-05T18:34:05Z",
+        "prompt": "Query the time series of error_ratio for pods 'cartservice-0', 'cartservice-1', and 'cartservice-2' during [${start_time}, ${end_time}]."
+    },
+    {
+        "level": "simple",
+        "type": "data",
+        "start_time": "2025-06-05T21:10:10Z",
+        "end_time": "2025-06-05T21:23:10Z",
+        "prompt": "Query trace spans on the call edge frontend -> productcatalogservice during [${start_time}, ${end_time}], and output avg(duration) and max(duration)."
+    },
+    {
+        "level": "complex",
+        "type": "data",
+        "start_time": "2025-06-06T01:10:16Z",
+        "end_time": "2025-06-06T01:21:16Z",
+        "prompt": "Query trace spans on the call edge frontend -> recommendationservice during [${start_time}, ${end_time}], and output avg(duration) and max(duration)."
+    },
+    {
+        "level": "complex",
+        "type": "data",
+        "start_time": "2025-06-05T23:10:13Z",
+        "end_time": "2025-06-05T23:24:13Z",
+        "prompt": "Compute delta(max-min) of node_cpu_usage_rate for node 'aiops-k8s-03' during [${start_time}, ${end_time}]."
+    },
+    {
+        "level": "complex",
+        "type": "data",
+        "start_time": "2025-06-06T21:10:18Z",
+        "end_time": "2025-06-06T21:22:18Z",
+        "prompt": "Query the time series of node_filesystem_usage_rate for node 'aiops-k8s-06' during [${start_time}, ${end_time}], and compute delta(max-min) within the window."
+    },
+    {
+        "level": "complex",
+        "type": "data",
+        "start_time": "2025-06-05T20:10:09Z",
+        "end_time": "2025-06-05T20:34:09Z",
+        "prompt": "Query timeout metrics for pods checkoutservice-0/1/2 and shippingservice-0/1/2 during [${start_time}, ${end_time}], output avg(timeout) per pod, and compare the overall averages between the two services."
+    },
+    {
+        "level": "complex",
+        "type": "data",
+        "start_time": "2025-06-16T16:10:02Z",
+        "end_time": "2025-06-16T16:26:02Z",
+        "prompt": "Aggregate avg(server_error_ratio) by pod during [${start_time}, ${end_time}], and output the Top-5 pods in descending order."
+    },
+    {
+        "level": "simple",
+        "type": "knowledge",
+        "prompt": "List all pods belonging to service 'shippingservice'."
+    },
+    {
+        "level": "simple",
+        "type": "knowledge",
+        "prompt": "Identify the node on which pod 'shippingservice-1' is deployed."
+    },
+    {
+        "level": "simple",
+        "type": "knowledge",
+        "prompt": "List all services deployed on node 'aiops-k8s-03'."
+    },
+    {
+        "level": "simple",
+        "type": "knowledge",
+        "prompt": "Query the 1-hop downstream dependency services of service 'frontend'."
+    },
+    {
+        "level": "simple",
+        "type": "knowledge",
+        "prompt": "Query the 1-hop downstream dependency services of service 'checkoutservice'."
+    },
+    {
+        "level": "complex",
+        "type": "knowledge",
+        "prompt": "Enumerate all downstream call paths from service 'frontend' to all leaf services."
+    },
+    {
+        "level": "complex",
+        "type": "knowledge",
+        "prompt": "Query the 1-hop, 2-hop, and 3-hop upstream caller services of 'shippingservice', grouped by hop level."
+    },
+    {
+        "level": "complex",
+        "type": "knowledge",
+        "prompt": "Compute the intersection between (services deployed on node 'aiops-k8s-03') and (1-hop downstream services of 'frontend')."
+    },
+    {
+        "level": "complex",
+        "type": "knowledge",
+        "prompt": "Query services co-located with 'shippingservice' on the same nodes, and output results grouped by node as node -> services."
+    },
+    {
+        "level": "complex",
+        "type": "knowledge",
+        "prompt": "Identify the Top-3 services with the largest out-degree in the call graph, and output their downstream counts."
+    },
+    {
+        "level": "simple",
+        "type": "fusion",
+        "start_time": "2025-06-05T16:10:02Z",
+        "end_time": "2025-06-05T16:31:02Z",
+        "prompt": "Query avg(pod_cpu_usage) for all pods of service 'emailservice' during [${start_time}, ${end_time}], and aggregate them to obtain the service-level average."
+    },
+    {
+        "level": "simple",
+        "type": "fusion",
+        "start_time": "2025-06-05T19:10:07Z",
+        "end_time": "2025-06-05T19:33:07Z",
+        "prompt": "Query avg(pod_cpu_usage) for all pods on node 'aiops-k8s-06' during [${start_time}, ${end_time}], and output the Top-5 pods in descending order."
+    },
+    {
+        "level": "simple",
+        "type": "fusion",
+        "start_time": "2025-06-05T21:10:10Z",
+        "end_time": "2025-06-05T21:23:10Z",
+        "prompt": "Query avg(trace span duration) for the call edge frontend -> productcatalogservice during [${start_time}, ${end_time}], and query avg(rrt) for all pods of productcatalogservice in the same window."
+    },
+    {
+        "level": "simple",
+        "type": "fusion",
+        "start_time": "2025-06-05T20:10:09Z",
+        "end_time": "2025-06-05T20:34:09Z",
+        "prompt": "Query avg(trace span duration) for the call edge frontend -> recommendationservice during [${start_time}, ${end_time}], and query avg(timeout) for all pods of recommendationservice in the same window."
+    },
+    {
+        "level": "simple",
+        "type": "fusion",
+        "start_time": "2025-06-06T21:10:18Z",
+        "end_time": "2025-06-06T21:22:18Z",
+        "prompt": "Aggregate sum(pod_fs_writes_bytes) by service for all services on node 'aiops-k8s-06' during [${start_time}, ${end_time}], and output the Top-3 services in descending order."
+    },
+    {
+        "level": "complex",
+        "type": "fusion",
+        "start_time": "2025-06-05T17:10:04Z",
+        "end_time": "2025-06-05T17:33:04Z",
+        "prompt": "Along the call chain frontend -> checkoutservice -> shippingservice -> emailservice, compute avg(trace span duration) for each call edge during [${start_time}, ${end_time}], and output the edge with the maximum latency."
+    },
+    {
+        "level": "complex",
+        "type": "fusion",
+        "start_time": "2025-06-05T18:10:05Z",
+        "end_time": "2025-06-05T18:34:05Z",
+        "prompt": "Query the 1-hop upstream caller services of 'cartservice', compute avg(error_ratio) for each upstream service during [${start_time}, ${end_time}], and output the list in descending order."
+    },
+    {
+        "level": "complex",
+        "type": "fusion",
+        "start_time": "2025-06-06T01:10:16Z",
+        "end_time": "2025-06-06T01:21:16Z",
+        "prompt": "Query avg(trace span duration) for the call edge frontend -> productcatalogservice during [${start_time}, ${end_time}], and output avg(timeout) for all pods of productcatalogservice in the same window."
+    },
+    {
+        "level": "complex",
+        "type": "fusion",
+        "prompt": "Compare two windows A=[2025-06-05T21:10:10Z, 2025-06-05T21:23:10Z] and B=[2025-06-06T01:10:16Z, 2025-06-06T01:21:16Z]: query the 1-hop downstream services of frontend, compute avg(rrt) for each service in both windows, and output the Top-3 services with the largest rrt increase."
+    },
+    {
+        "level": "complex",
+        "type": "fusion",
+        "start_time": "2025-06-06T21:10:18Z",
+        "end_time": "2025-06-06T21:22:18Z",
+        "prompt": "Identify the Top-3 pods with the largest sum(pod_fs_reads_bytes) on node 'aiops-k8s-06' during [${start_time}, ${end_time}], and output their corresponding services and sum values."
+    }
+]

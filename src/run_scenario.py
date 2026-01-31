@@ -19,7 +19,7 @@ from src.agent.mcp_agent_call import run_mcp_agent
 
 
 SCENARIO_JSON = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "data", "scenario_tasks.json"
+    os.path.dirname(os.path.dirname(__file__)), "data", "scenario_tasks_1.json"
 )
 
 SCENARIO_JSON_RESULT = os.path.join(
@@ -27,7 +27,7 @@ SCENARIO_JSON_RESULT = os.path.join(
 )
 
 SYSTEM_PROMPT = """
-You are a query executor. Your job is to return ONLY the final results.
+You are a query executor. Your job is to query data or query topology knowledge. Finally return ONLY the final results.
 
 Rules:
 - Do NOT output any analysis, explanation, reasoning, or summaries.
@@ -125,7 +125,7 @@ async def run_mcp_agent_async(scenario: Dict[str, Any], idx: int = 0):
 
 if __name__ == "__main__":
     scenarios = load_scenarios(SCENARIO_JSON)
-    for idx, scenario in enumerate(scenarios[:1]): 
+    for idx, scenario in enumerate(scenarios): 
         print(f"\n===== Scenario {idx} =====")
         print(f"Prompt: {scenario['prompt']}")
         print("--- [Traditional Agent] ---")

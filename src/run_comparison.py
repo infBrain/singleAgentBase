@@ -453,6 +453,8 @@ def build_system_prompt(start_time, end_time, instance_type="service"):
 
     Mapping rule:
     - If {instance_type}=service and evidence points to a pod (e.g., adservice-0), output the corresponding service name (e.g., adservice).
+    - If {instance_type}=node and evidence points to a pod or service, output the node on which the pod/service is running (e.g., aiops-k8s-03).
+    - If {instance_type}=pod and evidence points to a service, output the most directly responsible pod instance of that service during the incident window (e.g., adservice-0).
     - For other cross-level evidence, map it to the closest responsible {instance_type} entity and keep the reason brief.
 
     4) Tool-Use Rules (Anti-Hallucination, HARD)
@@ -496,7 +498,7 @@ def build_system_prompt(start_time, end_time, instance_type="service"):
     Return ONLY one JSON object (no markdown, no extra text, no tool traces, no intermediate reasoning).
     - Up to 3 root causes.
     - "location" MUST be a concrete instance name at the {instance_type} level.
-
+    - When multiple root-cause candidates exist, you MUST rank them by likelihood and list the most probable root cause first.
 
     Hard constraints:
     - The response MUST start with "{" as the first character and end with "}" as the last character.
@@ -584,7 +586,6 @@ async def run_mcp_only(
     #     sls_endpoints=sls_endpoints,
     #     cms_endpoints=cms_endpoints,
     # )
-
 
     mcp_result_text = await run_mcp_agent(
         system_prompt=system_prompt,
@@ -704,6 +705,24 @@ def run_rca_only(
 #     print(f"\nResults saved to {filepath}")
 
 
+def _write_results_to_file(mode, result_answers, is_partial=False):
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    result_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "result"
+    )
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
+    filename = (
+        f"{mode}_results_{timestamp}.jsonl"
+        if not is_partial
+        else f"{mode}_partial_results_{timestamp}.jsonl"
+    )
+    filepath = os.path.join(result_dir, filename)
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(result_answers, f, indent=2, ensure_ascii=False)
+    return filepath
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Compare MCP Agent and Local RCA Agent"
@@ -744,6 +763,7 @@ if __name__ == "__main__":
                 )
             ]  # Continue from a specific case index
 
+        index = args.fromIndex
         for case in tqdm(labels_tmp, desc="Processing Cases", total=len(labels_tmp)):
             start_time = case["start_time"]
             end_time = case["end_time"]
@@ -758,7 +778,7 @@ if __name__ == "__main__":
                         ground_truth=case.get("instance"),
                     )
                 )
-                result_answers.append(json.dumps(result, indent=2, ensure_ascii=False))
+                result_answers.append(result)
                 print(json.dumps(result, indent=2, ensure_ascii=False))
             elif args.mode == "rca":
                 result = run_rca_only(
@@ -768,23 +788,30 @@ if __name__ == "__main__":
                     instance_type=case.get("instance_type"),
                     ground_truth=case.get("instance"),
                 )
-                result_answers.append(json.dumps(result, indent=2, ensure_ascii=False))
+                result_answers.append(result)
                 print(json.dumps(result, indent=2, ensure_ascii=False))
             else:
                 pass
 
-        # Save all results to a single file
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        result_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "result"
-        )
-        if not os.path.exists(result_dir):
-            os.makedirs(result_dir)
-        filename = f"{args.mode}_results_{timestamp}.jsonl"
-        filepath = os.path.join(result_dir, filename)
-        with open(filepath, "w", encoding="utf-8") as f:
-            for answer in result_answers:
-                f.write(answer + "\n\n")
+            index += 1
+            if index % 50 == 0:
+                # Save intermediate results every 50 cases
+                filepath = _write_results_to_file(args.mode, result_answers, is_partial=True)
+                print(f"\nIntermediate results saved to {filepath}")
+
+        # # Save all results to a single file
+        # timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        # result_dir = os.path.join(
+        #     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "result"
+        # )
+        # if not os.path.exists(result_dir):
+        #     os.makedirs(result_dir)
+        # filename = f"{args.mode}_results_{timestamp}.jsonl"
+        # filepath = os.path.join(result_dir, filename)
+        # with open(filepath, "w", encoding="utf-8") as f:
+        #     for answer in result_answers:
+        #         f.write(answer + "\n\n")
+        filepath = _write_results_to_file(args.mode, result_answers)
         print(f"\nAll results saved to {filepath}")
 
     except Exception as e:

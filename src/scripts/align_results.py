@@ -25,7 +25,14 @@ def _iter_jsonl(path: str) -> Iterable[Dict]:
         if index >= length:
             break
         obj, end = decoder.raw_decode(content, index)
-        yield obj
+        # If the decoded object is a top-level JSON array, yield its elements.
+        # This handles RCA files that are a JSON array of objects.
+        if isinstance(obj, list):
+            for item in obj:
+                if isinstance(item, dict):
+                    yield item
+        else:
+            yield obj
         index = end
 
 
