@@ -1,0 +1,83 @@
+{
+    "entity_type": "aiops.node",
+    "domain": "aiops",
+    "columns": [
+        "nodeName",
+        "__entity_id__",
+        "__domain__",
+        "__entity_type__",
+        "__last_observed_time__",
+        "__first_observed_time__",
+        "__keep_alive_seconds__"
+    ],
+    "nodes": [
+        {
+            "nodeName": "aiops-k8s-04",
+            "__entity_id__": "23668ffe4f0b8c146135ebe7cbfba6a3",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.node",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766506021,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "nodeName": "aiops-k8s-03",
+            "__entity_id__": "d1c04a30f96c372ffe84c992fdb8688a",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.node",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766506021,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "nodeName": "aiops-k8s-05",
+            "__entity_id__": "6ff7816a988e5223faea27db6f13fab6",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.node",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766506022,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "nodeName": "aiops-k8s-01",
+            "__entity_id__": "f42047441ad63096115441cb217de5fa",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.node",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766506045,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "nodeName": "aiops-k8s-08",
+            "__entity_id__": "c0fbe3926c452d14c50379c1eebf2228",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.node",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766506021,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "nodeName": "aiops-k8s-06",
+            "__entity_id__": "56b24c102c41f7be8dfa37734efe744e",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.node",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505961,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "nodeName": "aiops-k8s-07",
+            "__entity_id__": "60b85e2abfb4a8b1d7f4c573f2546f1a",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.node",
+            "__last_observed_time__": 1768579198,
+            "__first_observed_time__": 1766506022,
+            "__keep_alive_seconds__": 2592000
+        }
+    ],
+    "meta": {
+        "source": "aliyun cms entity explorer",
+        "query": ".entity with(domain='*', type='aiops.node')",
+        "node_count": 7
+    }
+}

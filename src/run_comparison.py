@@ -14,9 +14,11 @@ from tqdm import tqdm
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.agent.mcp_agent_call import run_mcp_agent
-from src.agent.rca_agent import run_rca_agent
+from agent.traditional_agent import run_traditional_agent
 from src.utils.rca_output import parse_rca_json_output
-from utils.common_utils import _convert_to_beijing, _beijing_to_unix_seconds
+import src.tools.mcp_tools as mcp_tools
+import src.tools.traditional_tools as traditional_tools
+from src.utils.common_utils import _convert_to_beijing, _beijing_to_unix_seconds
 
 
 # def build_system_prompt(start_time, end_time):
@@ -526,13 +528,13 @@ def build_user_message(start_time, end_time, instace_type="service"):
     return f"A fault occurred from  {start_time} to {end_time} in {instace_type}. Please locate the accurate issue root cause."
 
 
-def build_project_details(
-    workspace, region, sls_project, logstore, metircstore, tracestore
-):
-    return f"""Your UModel workspace is '{workspace}' in region '{region}', and the SLS project is '{sls_project}'.
-    The logstore is '{logstore}', the metricstore is '{metircstore}', the tracestore is '{tracestore}'.
-    Use this information when configuring your data source connections.
-    """
+# def build_project_details(
+#     workspace, region, sls_project, logstore, metircstore, tracestore
+# ):
+#     return f"""Your UModel workspace is '{workspace}' in region '{region}', and the SLS project is '{sls_project}'.
+#     The logstore is '{logstore}', the metricstore is '{metircstore}', the tracestore is '{tracestore}'.
+#     Use this information when configuring your data source connections.
+#     """
 
 
 ## MCP Agent Execution
@@ -551,12 +553,12 @@ async def run_mcp_only(
     )
     prompt_end_time = _beijing_to_unix_seconds(
         _convert_to_beijing(end_time, delay=delay)
-    )   
+    )
     system_prompt = build_system_prompt(
         prompt_start_time, prompt_end_time, instance_type
     )
     user_message = build_user_message(prompt_start_time, prompt_end_time, instance_type)
-    project_details = build_project_details(
+    project_details = mcp_tools.build_project_details(
         workspace="zy-aiops-challenges-2025",
         region="cn-heyuan",
         sls_project="default-cms-1102382765107602-cn-heyuan",
@@ -582,6 +584,8 @@ async def run_mcp_only(
     #     sls_endpoints=sls_endpoints,
     #     cms_endpoints=cms_endpoints,
     # )
+
+
     mcp_result_text = await run_mcp_agent(
         system_prompt=system_prompt,
         project_details=project_details,
@@ -591,6 +595,7 @@ async def run_mcp_only(
     )
 
     mcp_result = parse_rca_json_output(mcp_result_text)
+
     if uuid:
         mcp_result["uuid"] = uuid
     mcp_result["start_time"] = start_time
@@ -609,9 +614,20 @@ def run_rca_only(
     instance_type="service",
     ground_truth=None,
 ):
+    tools = [
+        traditional_tools.guide_intro,
+        traditional_tools.analyze_fault_type,
+        traditional_tools.detect_metrics,
+        traditional_tools.detect_traces,
+        traditional_tools.detect_logs,
+        traditional_tools.get_system_info,
+    ]
     system_prompt = build_system_prompt(start_time, end_time, instance_type)
     user_message = build_user_message(start_time, end_time, instance_type)
-    rca_result = run_rca_agent(start_time, end_time, system_prompt, user_message)
+    rca_result = run_traditional_agent(system_prompt, user_message, tools)
+
+    rca_result = parse_rca_json_output(rca_result)
+
     if uuid:
         rca_result["uuid"] = uuid
     if instance_type:

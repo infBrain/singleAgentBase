@@ -7,7 +7,8 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.client.sse import sse_client
 from langgraph.prebuilt import create_react_agent
-from langchain_mcp_adapters.tools import load_mcp_tools
+
+# from langchain_mcp_adapters.tools import load_mcp_tools
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
@@ -15,9 +16,9 @@ from langchain_core.messages import SystemMessage, HumanMessage
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.mcp_tools import (
-    guide_intro,
     set_mcp_session,
     clear_mcp_session,
+    guide_intro,
     introduction,
     list_workspace,
     list_domains,
@@ -103,7 +104,7 @@ async def run_mcp_agent_logic(
     tools = get_mcp_tools()
 
     # use call to load tools dynamically instead of loading all at once
-    # tools = await load_mcp_tools(session) 
+    # tools = await load_mcp_tools(session)
     # tools.append(guide_intro)
 
     agent = create_react_agent(llm, tools)
@@ -161,6 +162,7 @@ async def run_mcp_agent(
     connection_mode: Literal["sse", "stdio"] = "sse",
     url: str = "http://127.0.0.1:8000/sse",
     cmd: str = "python",
+    tools: Optional[List] = None,
     access_key_id: Optional[str] = None,
     access_key_secret: Optional[str] = None,
     sls_endpoints: Optional[str] = None,

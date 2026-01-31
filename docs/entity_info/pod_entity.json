@@ -1,0 +1,231 @@
+{
+    "entity_type": "aiops.pod",
+    "domain": "aiops",
+    "columns": [
+        "podName",
+        "namespace",
+        "__entity_id__",
+        "__domain__",
+        "__entity_type__",
+        "__last_observed_time__",
+        "__first_observed_time__",
+        "__keep_alive_seconds__"
+    ],
+    "pods": [
+        {
+            "podName": "recommendationservice-0",
+            "namespace": "hipstershop",
+            "__entity_id__": "0d915972c9499800a8d7113e5a458a12",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768433184,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "frontend-2",
+            "namespace": "hipstershop",
+            "__entity_id__": "00bec204c2a3601c4c5eb2ae167d2f4b",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "frontend-0",
+            "namespace": "hipstershop",
+            "__entity_id__": "6130d682db3ef3a60c3aa237c8f81701",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768570481,
+            "__first_observed_time__": 1766505601,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "emailservice-1",
+            "namespace": "hipstershop",
+            "__entity_id__": "44345aec143ead377a8a34b4265bc676",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579190,
+            "__first_observed_time__": 1766505622,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "checkoutservice-2",
+            "namespace": "hipstershop",
+            "__entity_id__": "ad541e1a4faef0f5e244bb30116833a7",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768570410,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "cartservice-0",
+            "namespace": "hipstershop",
+            "__entity_id__": "06f7cd1b7a0437d3cc016d0984f5e4fd",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "frontend-1",
+            "namespace": "hipstershop",
+            "__entity_id__": "e89d9bcbe332fed7a0219f759a695299",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505601,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "cartservice-2",
+            "namespace": "hipstershop",
+            "__entity_id__": "cc67084d66691ff6654e9c848a68da64",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579190,
+            "__first_observed_time__": 1766505622,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "recommendationservice-2",
+            "namespace": "hipstershop",
+            "__entity_id__": "3f586c4e0813c922f9733b75f0ef72d9",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579196,
+            "__first_observed_time__": 1766582333,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "shippingservice-1",
+            "namespace": "hipstershop",
+            "__entity_id__": "bce212fe910e9b1cf10342d5df89ce49",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579198,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "emailservice-2",
+            "namespace": "hipstershop",
+            "__entity_id__": "d228085b42d1bf01d64dad49a6d55a3a",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579165,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "checkoutservice-0",
+            "namespace": "hipstershop",
+            "__entity_id__": "8ec2b04bc810db38f316fc368295645b",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768478786,
+            "__first_observed_time__": 1766917404,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "shippingservice-2",
+            "namespace": "hipstershop",
+            "__entity_id__": "41dfab185cf2618bd0b155bfce70354e",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579165,
+            "__first_observed_time__": 1766505622,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "cartservice-1",
+            "namespace": "hipstershop",
+            "__entity_id__": "5d1f778c1e883a671c275391efdf667a",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "productcatalogservice-2",
+            "namespace": "hipstershop",
+            "__entity_id__": "13b9c6fe4654398843ddfb4cfced15cb",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505601,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "productcatalogservice-1",
+            "namespace": "hipstershop",
+            "__entity_id__": "ec2cddfb3bab16e52998a7e6f76389a5",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "shippingservice-0",
+            "namespace": "hipstershop",
+            "__entity_id__": "6eae11684eb331cc018cbf512630df7d",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579190,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "recommendationservice-1",
+            "namespace": "hipstershop",
+            "__entity_id__": "d1010e4d0e317df9716db3d5a9b76e24",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766751058,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "emailservice-0",
+            "namespace": "hipstershop",
+            "__entity_id__": "fcfeb5b494127a518874b83e73c0b0d5",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579165,
+            "__first_observed_time__": 1766505705,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "productcatalogservice-0",
+            "namespace": "hipstershop",
+            "__entity_id__": "b28dfcfbb1b4701beba764b3cefd9b8c",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579164,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "podName": "checkoutservice-1",
+            "namespace": "hipstershop",
+            "__entity_id__": "6c9801cb32e0688dcee238c06c1fb6bd",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.pod",
+            "__last_observed_time__": 1768579190,
+            "__first_observed_time__": 1766939411,
+            "__keep_alive_seconds__": 2592000
+        }
+    ],
+    "meta": {
+        "source": "aliyun cms entity explorer",
+        "query": ".entity with(domain='*', type='aiops.pod')",
+        "total_count": 21
+    }
+}

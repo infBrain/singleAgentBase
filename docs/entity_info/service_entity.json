@@ -1,0 +1,171 @@
+{
+    "entity_type": "aiops.service",
+    "domain": "aiops",
+    "columns": [
+        "service",
+        "region",
+        "agentInfo",
+        "__entity_id__",
+        "__domain__",
+        "__entity_type__",
+        "__last_observed_time__",
+        "__first_observed_time__",
+        "__keep_alive_seconds__"
+    ],
+    "rows": [
+        {
+            "service": "recommendationservice",
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "f348880db058c3006f397bfe79b0482f",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "service": "cartservice",
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "e693be4b72cbab2e059a54b504399578",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "service": "checkoutservice",
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "affea4dc5c4768ebd279664332705bd3",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579190,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "service": "frontend",
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "aca33b9c046b2a50b8c3c54cc0380de8",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "service": "emailservice",
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "519311f60bc8cd77fcfd0b3428d9e148",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579190,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "service": "shippingservice",
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "b888af5817a161b119268ffad5c71d2b",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579198,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        {
+            "service": "productcatalogservice",
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "91d2da46e4e90c91f570b1dd67aefe23",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        }
+    ],
+    "by_service": {
+        "recommendationservice": {
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "f348880db058c3006f397bfe79b0482f",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        "cartservice": {
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "e693be4b72cbab2e059a54b504399578",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        "checkoutservice": {
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "affea4dc5c4768ebd279664332705bd3",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579190,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        "frontend": {
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "aca33b9c046b2a50b8c3c54cc0380de8",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        "emailservice": {
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "519311f60bc8cd77fcfd0b3428d9e148",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579190,
+            "__first_observed_time__": 1766505607,
+            "__keep_alive_seconds__": 2592000
+        },
+        "shippingservice": {
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "b888af5817a161b119268ffad5c71d2b",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579198,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        },
+        "productcatalogservice": {
+            "region": "cn-hongkong",
+            "agentInfo": "jaeger",
+            "__entity_id__": "91d2da46e4e90c91f570b1dd67aefe23",
+            "__domain__": "aiops",
+            "__entity_type__": "aiops.service",
+            "__last_observed_time__": 1768579199,
+            "__first_observed_time__": 1766505600,
+            "__keep_alive_seconds__": 2592000
+        }
+    },
+    "meta": {
+        "source": "aliyun cms entity explorer (selection)",
+        "query": ".entity with(domain='*', type='aiops.service')",
+        "row_count": 7
+    }
+}

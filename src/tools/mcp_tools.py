@@ -53,6 +53,13 @@ async def _call_tool(name: str, arguments: Dict[str, Any]) -> str:
 
     return output_text.strip()
 
+def build_project_details(
+    workspace, region, sls_project, logstore, metircstore, tracestore
+):
+    return f"""Your UModel workspace is '{workspace}' in region '{region}', and the SLS project is '{sls_project}'.
+    The logstore is '{logstore}', the metricstore is '{metircstore}', the tracestore is '{tracestore}'.
+    Use this information when configuring your data source connections.
+    """
 
 @tool
 async def guide_intro() -> str:
